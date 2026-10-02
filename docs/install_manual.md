@@ -70,7 +70,7 @@ python3 install.py --method B
 
 You can also omit `--method` and select `B` at the menu. Accept or review package provisioning, enter `/srv/AtlasMemory` at the vault-path prompt, and optionally provide HackerOne API credentials from [API token settings](https://hackerone.com/settings/api_token/edit).
 
-HackerOne uses an **API identifier** and **API token**. The installer saves them as `H1_API_IDENTIFIER` and `H1_API_TOKEN` in the installing account's managed shell-profile block; the token prompt hides the value. Leaving them blank keeps bundled report data available but disables authenticated API refresh.
+Enter your **HackerOne username** in the **API identifier** field (`H1_API_IDENTIFIER`), and your **generated API token value** in the **API token** field (`H1_API_TOKEN`). Personal Hacker API authentication uses this username/token pair; see the [official API token guide](https://docs.hackerone.com/en/articles/8410331-api-token). The installer saves them in the installing account's managed shell-profile block; the token prompt hides the value. Leaving them blank keeps bundled report data available but disables authenticated API refresh.
 
 Answer the identity and connection prompts as follows:
 

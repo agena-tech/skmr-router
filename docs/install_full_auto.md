@@ -72,7 +72,7 @@ Enter the requested information in order:
 4. **Agent 2's name**, different from the first agent's identity.
 5. **Agent 2's rank:** `Commander` or `Lieutenant`.
 6. **Agent 2's existing local vault path**, if it is a Commander. A Lieutenant's remote vault path is assigned automatically.
-7. **HackerOne API identifier and token**, if you want authenticated disclosure discovery. Obtain them from [HackerOne API token settings](https://hackerone.com/settings/api_token/edit). The token prompt hides the value. Leaving credentials blank retains the bundled report corpus but disables authenticated API refresh.
+7. **HackerOne API identifier and token**, if you want authenticated disclosure discovery. Enter your **HackerOne username** in the **API identifier** field (`H1_API_IDENTIFIER`), and your **generated API token value** in the **API token** field (`H1_API_TOKEN`). Generate the token in [HackerOne API token settings](https://hackerone.com/settings/api_token/edit); the [official API token guide](https://docs.hackerone.com/en/articles/8410331-api-token) confirms this username/token pair. The token prompt hides the value. Leaving credentials blank retains the bundled report corpus but disables authenticated API refresh.
 
 Two Lieutenants are rejected. These combinations are supported:
 

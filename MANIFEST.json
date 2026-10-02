@@ -4,7 +4,7 @@
   "sha256": {
     ".knowledge-copy.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     ".knowledge-copy.status": "c4f0f0c2ea93675c9f36d2b2c984f770d91e70f8b6247395242acabc205685de",
-    "README.md": "ff675f04229680fba770356f72d639ac0a67408eb4ecda7ef39100ce66dc092d",
+    "README.md": "e7fcd278237668c5d7e640b771a069b83934f77d4d6b08dfd93c890d371b24a8",
     "install.py": "6ba4977e7e54ea208d31bfffa5547e09a2f3db8f1443ad6ac349123d69f7cdfb",
     "payload/agentcomm/README.md": "801d1c878dcf8ca384199a475fa91975e10a81ad076701a75d06203dd4a210db",
     "payload/agentcomm/agent.conf.template": "f5a1bd800a40e651744a4c2f8e0373ad1509e7bf9cb456cca72bbd20e03efa39",
@@ -132,8 +132,8 @@
     "tests/test_installer.py": "0b49d3cf407a6947ef5d4924ae381738cc8f8340ba62f01efa93bfbc21e607ad",
     "images/banner.jpg": "6d72ebd71ee38c4d3dec63188856ce76f50a421b00401bd2e273954bf19cc5d8",
     "images/architecture.svg": "e3ca6947e50b524355dce6dbdf2993ddb441149d7098e63e98f4a7ff7077773b",
-    "docs/install_full_auto.md": "432097628919cd5fadb8352fbc64a021de19ba5fa2517e278f586ed13255438b",
-    "docs/install_manual.md": "c8b3aa4be467356eb0be304d07ed4f82e6c82adb3645236cf4cbc7f6a45477c7",
+    "docs/install_full_auto.md": "5c61e22b34b733e105bca7a91184eb6ad2e25a754e8d2b8ab28e350dd7f04ef7",
+    "docs/install_manual.md": "5d955f90637f74f2e1bd6120cd334a971c987bcd8b2491771122b58058b5ccce",
     ".gitignore": "b55a53ece4d8f0394eef546a9195a7394e3a2ef21303e66f9aca9340d45b8621"
   }
 }
