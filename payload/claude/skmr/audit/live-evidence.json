@@ -1,0 +1,11 @@
+{
+  "real_bge_m3_fixture_index": {
+    "chunks": 2,
+    "embedded": 2
+  },
+  "different_wording_same_meaning": "upper limb actuator -> arm.md",
+  "exact_error_code": "9876 -> oauth.md",
+  "mixed_hybrid_query": "9876 authorization failure -> oauth.md",
+  "unchanged_fixture_reembedded": 0,
+  "actual_unreachable_transport": "send health: exit=3, controlled connection refusal; temporary fixture config only"
+}

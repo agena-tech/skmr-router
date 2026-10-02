@@ -1,0 +1,114 @@
+
+SKMR §90 checklist audit — 43 probes
+
+
+## Cleanup
+  [   PASS] Repository analiz edildi / dependency map çıkarıldı
+            └─ dependency map produced in-session; SKMR_SETTINGS_FRAGMENT.json and skmr_inbox.py kept because references were found
+  [   PASS] Gereksiz dosyalar temizlendi
+            └─ 28 unreferenced files moved to .archive-20260926 (reference-checked, reversible)
+  [   PASS] Dead code kaldırıldı
+            └─ no unused imports in package code
+  [   PASS] Duplicate implementation'lar kaldırıldı
+            └─ one central executing emitter: ['core/output.py']
+  [   PASS] Debug artifacts / temporary files kaldırıldı
+            └─ no debug prints, TODOs, .tmp files or __pycache__ in the package
+
+## Commands
+  [   PASS] /skmr:* standardı çalışıyor
+            └─ 10 /skmr:* command files match the registry
+  [   PASS] Skill registry çalışıyor (single source of truth)
+            └─ help lists all 10 registry entries at runtime
+  [   PASS] Command dispatcher merkezi çalışıyor
+            └─ central dispatch: unknown -> exit 2 + error, known -> exit 0
+  [   PASS] User-facing raw script çağrısı kalmadı
+            └─ no bash/sh/./ user-facing invocations in command files
+
+## Hooks
+  [   PASS] Execution / planning / routing hook merkezi
+            └─ hooks/: ['execution', 'planning', 'routing', 'runtime']
+  [   PASS] Duplicate hook logic yok (tek banner)
+            └─ Executing x1, Planning x1 per invocation
+  [   PASS] Lifecycle /skmr:* dışındaki skill'lere de uygulanıyor
+            └─ PreToolUse(Skill) hook applies the lifecycle to monitored external skills
+  [   PASS] Routing yalnızca gerçek routing'de gösteriliyor
+            └─ routing announced once on a real hand-off, absent otherwise
+
+## Planning
+  [   PASS] Planning complexity-aware, basitte spam yok
+            └─ simple task: no plan body; complex task: numbered plan
+
+## Subagents
+  [   PASS] Subagent kararı otomatik; gereksizde çağrılmıyor
+            └─ trivial -> none; multi-unit -> 4 derived
+  [   PASS] Subagent sayısı hardcoded değil
+            └─ count varies with units (4 vs 5); capped by config max_subagents
+  [   PASS] Subagent tablosu + dependency gösteriliyor
+            └─ table rendered with roles, tasks, dependencies and expected output
+
+## Native State
+  [   PASS] MEMORY.md current state olarak çalışıyor
+            └─ populated sections: ['Active Agent Topology', 'Active Task', 'Last Completed', 'Next', 'Phase']
+  [   PASS] Nerede kalmıştık / en son / devam edelim → native-memory
+            └─ 6/6 state questions detected and routed to native-memory
+  [   PASS] Subagent state + blocker MEMORY.md'de korunuyor
+            └─ states survive a fresh read: {'6da624dba5-unit-01-agent': ('PLANNED', ''), '6da624dba5-unit-02-agent': ('PLANNED', ''), '6da624dba5-unit-03-agent': ('PLANNED', ''), '6da624dba5-unit-04-agent': ('PLANNED', ''), '6da624dba5-verifier-agent': ('QUEUED', ''), 'unit-01-agent': ('RUNNING', 'mid-flight'), 'unit-02-agent': ('BLOCKED', 'waiting'), 'verifier-agent': ('QUEUED', '')}
+  [   PASS] State write safety (lock + atomic + orchestrator)
+            └─ locked read-merge-atomic-replace; subagents funnel through the orchestrator
+
+## Identity
+  [   PASS] Agent name/role/topology korunuyor
+            └─ Eliza — Commander; Sondra — Lieutenant @ LAPTOP-BHM2J6BL reports to Eliza
+  [   PASS] Identity intent detection çalışıyor
+            └─ 5/5 identity questions detected
+  [   PASS] Role validation; invalid input persist edilmiyor
+            └─ 4/4 invalid inputs rejected; live topology intact afterwards
+
+## Obsidian
+  [   PASS] BM25 / VECTOR / HYBRID çalışıyor
+            └─ bm25=2, vector=2, hybrid=2
+  [   PASS] Fusion strategy doğru ve configurable
+            └─ RRF and normalized-weighted both implemented; active strategy=rrf
+  [   PASS] Raw BM25+vector skorları toplanmıyor
+            └─ weighted path normalises before combining; RRF compares ranks
+  [   PASS] Dedupe + rerank (fallback'li)
+            └─ dedupe + feature rerank present; rerank falls back to merge order on error
+  [   PASS] Heading-aware chunking
+            └─ heading-aware: 2 chunks, headings=['One', 'Two']
+  [   PASS] bge-m3 entegrasyonu
+            └─ ollama:bge-m3 reachable
+  [   PASS] Embedding provider abstraction
+            └─ EmbeddingProvider protocol + factory; model swap needs no retrieval change
+  [   PASS] Incremental indexing
+            └─ 49 files scanned, 0 re-chunked, 0 re-embedded in 0.01s
+  [   PASS] Version invalidation alanları
+            └─ {'embedding_signature': 'ollama:bge-m3:v1', 'chunking_version': '1', 'index_version': '2'}
+  [   PASS] Search fallback matrisi
+            └─ vector down -> BM25+warning; mode=vector -> error; missing mount -> error
+  [   PASS] Canonical writer authority korunuyor
+            └─ no vault writes here; route/preview/commit/validate/lint delegated to the writer
+
+## CLAUDE.md
+  [   PASS] Sadeleştirildi, behavior korunuyor
+            └─ CLAUDE.md: 339 lines, 16450 bytes; combined auto-loaded rules: 23088 bytes; behaviour rules covered   : 107/107
+  [   PASS] Körlemesine overwrite edilmiyor
+            └─ delimited block updated in place, backup taken (3 backups on disk)
+
+## Learning
+  [   PASS] Knowledge / error learning filtreli
+            └─ noise rejected, generalized lesson accepted
+  [   PASS] Learning auto-commit yapmıyor
+            └─ learning stages a candidate only; commit stays with the guarded writer flow
+  [   PASS] Memory log çöplüğüne dönüşmüyor
+            └─ MEMORY.md is 3183 B of structured state, no append path
+
+## Final
+  [   PASS] Configuration single source of truth
+            └─ 30 keys in one config file; defaults in core/config.py
+  [   PASS] Documentation güncel
+            └─ README covers 5/5 required topics, 6954 B
+  [   PASS] Tüm test suite'leri
+            └─ Fresh independent runner: 11/11 suites passed
+
+========================================================================
+  PASS=43

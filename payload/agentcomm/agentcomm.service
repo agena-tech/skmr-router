@@ -1,0 +1,17 @@
+[Unit]
+Description=Authenticated agent messaging and canonical SKMR storage API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/agentcomm
+ExecStart=/usr/bin/python3 -m uvicorn server:app --host 0.0.0.0 --port 8080 --workers 1
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

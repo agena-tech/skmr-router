@@ -1,0 +1,456 @@
+{
+  "skmr/__init__.py": [],
+  "skmr/cli.py": [
+    "__future__",
+    "sys",
+    "pathlib",
+    "skmr.core.dispatcher"
+  ],
+  "skmr/core/__init__.py": [],
+  "skmr/core/dispatcher.py": [
+    "__future__",
+    "importlib",
+    "sys",
+    "typing",
+    ".",
+    "..hooks"
+  ],
+  "skmr/core/registry.py": [
+    "__future__",
+    "dataclasses"
+  ],
+  "skmr/core/output.py": [
+    "__future__",
+    "os",
+    "sys",
+    "typing",
+    "."
+  ],
+  "skmr/core/config.py": [
+    "__future__",
+    "json",
+    "os",
+    "pathlib",
+    "typing",
+    "math"
+  ],
+  "skmr/agents/__init__.py": [],
+  "skmr/agents/orchestrator.py": [
+    "__future__",
+    "fcntl",
+    "json",
+    "os",
+    "time",
+    "contextlib",
+    "dataclasses",
+    "..core",
+    "..memory",
+    "..memory.native",
+    "..planning.planner"
+  ],
+  "skmr/agents/topology.py": [
+    "__future__",
+    "ipaddress",
+    "json",
+    "os",
+    "re",
+    "time",
+    "dataclasses",
+    "..core"
+  ],
+  "skmr/hooks/__init__.py": [],
+  "skmr/hooks/planning.py": [
+    "__future__",
+    "..core",
+    "..core.registry",
+    "..planning",
+    "..planning.planner"
+  ],
+  "skmr/hooks/execution.py": [
+    "__future__",
+    "json",
+    "os",
+    "time",
+    "pathlib",
+    "..core"
+  ],
+  "skmr/hooks/routing.py": [
+    "__future__",
+    "..core"
+  ],
+  "skmr/hooks/runtime.py": [
+    "__future__",
+    "contextlib",
+    "hashlib",
+    "io",
+    "json",
+    "re",
+    "..core",
+    "..memory",
+    "..planning",
+    "..agents",
+    "..hooks",
+    "sys",
+    "pathlib",
+    "skmr_security_registry",
+    "..memory.retrieval"
+  ],
+  "skmr/hooks/report_review.py": [
+    "__future__",
+    "fcntl",
+    "hashlib",
+    "json",
+    "os",
+    "re",
+    "tempfile",
+    "pathlib"
+  ],
+  "skmr/memory/__init__.py": [],
+  "skmr/memory/intent.py": [
+    "__future__",
+    "re",
+    "unicodedata",
+    "dataclasses",
+    "..agents",
+    ".retrieval.embeddings"
+  ],
+  "skmr/memory/native.py": [
+    "__future__",
+    "fcntl",
+    "os",
+    "re",
+    "time",
+    "contextlib",
+    "dataclasses",
+    "pathlib",
+    "..core"
+  ],
+  "skmr/memory/learning.py": [
+    "__future__",
+    "json",
+    "re",
+    "dataclasses",
+    "pathlib",
+    "..core"
+  ],
+  "skmr/commands/__init__.py": [],
+  "skmr/commands/bugskills_cmd.py": [
+    "__future__",
+    "re",
+    "subprocess",
+    "pathlib",
+    "..core",
+    "..hooks",
+    "..planning.planner"
+  ],
+  "skmr/commands/plan_cmd.py": [
+    "__future__",
+    "..agents",
+    "..core",
+    "..planning.planner"
+  ],
+  "skmr/commands/state_cmd.py": [
+    "__future__",
+    "..core",
+    "..hooks",
+    "..memory",
+    "..planning.planner",
+    "..agents",
+    "json",
+    "..agents",
+    "..agents",
+    "..agents"
+  ],
+  "skmr/commands/help_cmd.py": [
+    "__future__",
+    "..core",
+    "..planning.planner"
+  ],
+  "skmr/commands/learn_cmd.py": [
+    "__future__",
+    "..core",
+    "..hooks",
+    "..memory.learning",
+    "..planning.planner"
+  ],
+  "skmr/commands/doctor_cmd.py": [
+    "__future__",
+    "json",
+    "subprocess",
+    "pathlib",
+    "..core",
+    "..planning.planner",
+    "..memory.indexing",
+    "..memory.indexing",
+    "..memory.retrieval",
+    "..memory",
+    "..agents"
+  ],
+  "skmr/commands/hackerone_cmd.py": [
+    "__future__",
+    "subprocess",
+    "pathlib",
+    "..core",
+    "..hooks",
+    "..planning.planner",
+    "importlib.util",
+    "json",
+    "datetime"
+  ],
+  "skmr/commands/assign_role_cmd.py": [
+    "__future__",
+    "shutil",
+    "sys",
+    "time",
+    "pathlib",
+    "..core",
+    "..agents",
+    "..agents.topology",
+    "..memory",
+    "..planning.planner"
+  ],
+  "skmr/commands/obsidian_memory_cmd.py": [
+    "__future__",
+    "subprocess",
+    "..core",
+    "..hooks",
+    "..memory.indexing",
+    "..memory.retrieval",
+    "..planning.planner",
+    "..memory.retrieval"
+  ],
+  "skmr/commands/send_cmd.py": [
+    "__future__",
+    "subprocess",
+    "pathlib",
+    "..core",
+    "..hooks",
+    "..planning.planner",
+    "json",
+    "os",
+    "..agents"
+  ],
+  "skmr/planning/__init__.py": [],
+  "skmr/planning/planner.py": [
+    "__future__",
+    "re",
+    "dataclasses",
+    "..core",
+    "..core.registry"
+  ],
+  "skmr/memory/indexing/__init__.py": [],
+  "skmr/memory/indexing/index.py": [
+    "__future__",
+    "hashlib",
+    "sqlite3",
+    "struct",
+    "time",
+    "dataclasses",
+    "pathlib",
+    "...core",
+    "..retrieval",
+    "..retrieval.chunking",
+    "..retrieval.embeddings",
+    "..retrieval.embeddings",
+    "math"
+  ],
+  "skmr/memory/retrieval/__init__.py": [],
+  "skmr/memory/retrieval/tokenizer.py": [
+    "__future__",
+    "re",
+    "unicodedata"
+  ],
+  "skmr/memory/retrieval/embeddings.py": [
+    "__future__",
+    "json",
+    "urllib.error",
+    "urllib.request",
+    "typing",
+    "...core"
+  ],
+  "skmr/memory/retrieval/hybrid.py": [
+    "__future__",
+    "sqlite3",
+    "dataclasses",
+    "...core",
+    "..indexing.index",
+    ".",
+    ".bm25"
+  ],
+  "skmr/memory/retrieval/bm25.py": [
+    "__future__",
+    "math",
+    "sqlite3",
+    "dataclasses",
+    "."
+  ],
+  "skmr/memory/retrieval/vector.py": [
+    "__future__",
+    "sqlite3",
+    "dataclasses",
+    "..indexing.index",
+    ".bm25",
+    ".embeddings",
+    "numpy"
+  ],
+  "skmr/memory/retrieval/chunking.py": [
+    "__future__",
+    "hashlib",
+    "re",
+    "dataclasses",
+    "...core"
+  ],
+  "bin/security-context-reminder.py": [
+    "hashlib",
+    "json",
+    "os",
+    "sys",
+    "pathlib"
+  ],
+  "bin/security-failure-reminder.py": [
+    "hashlib",
+    "json",
+    "os",
+    "sys",
+    "pathlib"
+  ],
+  "bin/ld.py": [
+    "sys",
+    "json",
+    "re",
+    "burpmcp"
+  ],
+  "bin/burp-mcp-forward.py": [
+    "socket",
+    "subprocess",
+    "sys",
+    "threading"
+  ],
+  "bin/burpmcp.py": [
+    "socket",
+    "time",
+    "json",
+    "re",
+    "sys"
+  ],
+  "bin/security-workflow-reminder.py": [
+    "hashlib",
+    "json",
+    "os",
+    "re",
+    "secrets",
+    "sys",
+    "datetime",
+    "pathlib",
+    "skmr_security_registry",
+    "skmr_inbox"
+  ],
+  "bin/security-consultation-guard.py": [
+    "__future__",
+    "fcntl",
+    "hashlib",
+    "json",
+    "os",
+    "re",
+    "secrets",
+    "shlex",
+    "sys",
+    "datetime",
+    "pathlib",
+    "skmr_security_registry"
+  ],
+  "bin/security-pending-stop.py": [
+    "json",
+    "os",
+    "sys",
+    "pathlib"
+  ],
+  "bin/skmr-runtime.py": [
+    "json",
+    "sys",
+    "skmr.hooks.runtime"
+  ],
+  "bin/security-report-queue.py": [
+    "__future__",
+    "argparse",
+    "fcntl",
+    "json",
+    "os",
+    "re",
+    "secrets",
+    "datetime",
+    "pathlib"
+  ],
+  "bin/agent-message-watcher.py": [
+    "__future__",
+    "fcntl",
+    "json",
+    "os",
+    "re",
+    "sys",
+    "tempfile",
+    "time",
+    "urllib.error",
+    "urllib.request",
+    "pathlib"
+  ],
+  "bin/security-kb-session-start.py": [
+    "__future__",
+    "base64",
+    "fcntl",
+    "json",
+    "os",
+    "re",
+    "shutil",
+    "subprocess",
+    "sys",
+    "time",
+    "urllib.error",
+    "urllib.parse",
+    "urllib.request",
+    "datetime",
+    "pathlib",
+    "skmr_agent_policy",
+    "skmr_inbox"
+  ],
+  "bin/skmr-skill-lifecycle.py": [
+    "json",
+    "sys",
+    "skmr.hooks.runtime"
+  ],
+  "lib/skmr_agent_policy.py": [
+    "json",
+    "os",
+    "pathlib"
+  ],
+  "lib/skmr_security_registry.py": [
+    "__future__",
+    "json",
+    "os",
+    "functools",
+    "pathlib"
+  ],
+  "lib/skmr_inbox.py": [
+    "__future__",
+    "contextlib",
+    "io"
+  ],
+  "skills/skmr/scripts/obsidian_memory.py": [
+    "__future__",
+    "argparse",
+    "difflib",
+    "fcntl",
+    "hashlib",
+    "json",
+    "os",
+    "re",
+    "secrets",
+    "sys",
+    "tempfile",
+    "unicodedata",
+    "datetime",
+    "pathlib",
+    "typing",
+    "skmr_agent_policy"
+  ]
+}

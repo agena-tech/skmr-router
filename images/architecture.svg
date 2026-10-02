@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="940" viewBox="0 0 1400 940" role="img" aria-labelledby="title description">
+  <title id="title">SKMR — System Architecture</title>
+  <desc id="description">HackerOne disclosures enter authorized review. Claude Code tasks and security methods feed the SKMR router. A READ Lieutenant and WRITE Commander coordinate through AgentComm. Accepted lessons pass a save gate and canonical preview and commit workflow into Obsidian. Hybrid retrieval provides selective recall. Working state persists in MEMORY.md.</desc>
+  <defs>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#30f2de" stroke-opacity=".055" stroke-width="1"/></pattern>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto-start-reverse" markerUnits="strokeWidth"><path d="M0 0L8 4L0 8Z" fill="#30f2de"/></marker>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+      text{font-family:'DejaVu Sans Mono','Consolas',monospace}
+      .heading{fill:#e6fffb;font-size:26px;font-weight:700;letter-spacing:2px}
+      .eyebrow{fill:#30f2de;font-size:12px;letter-spacing:2px}
+      .box{fill:#061316;stroke:#30f2de;stroke-width:1.4}
+      .label{fill:#e6fffb;font-size:18px;font-weight:700;letter-spacing:1px}
+      .detail{fill:#98c9c4;font-size:13px}
+      .wire{fill:none;stroke:#30f2de;stroke-width:1.8;marker-end:url(#arrow)}
+      .read{fill:none;stroke:#30f2de;stroke-opacity:.65;stroke-width:1.6;stroke-dasharray:6 5;marker-end:url(#arrow)}
+      .wire-label{fill:#67d9cc;font-size:11px;letter-spacing:1px}
+      .port{fill:#30f2de;filter:url(#glow)}
+    </style>
+  </defs>
+  <rect width="1400" height="940" fill="#020707"/>
+  <rect width="1400" height="940" fill="url(#grid)"/>
+  <path d="M22 48V22H70M1330 22H1378V48M22 892V918H70M1330 918H1378V892" fill="none" stroke="#30f2de" stroke-width="2" filter="url(#glow)"/>
+  <text x="48" y="68" class="heading">SKMR // SYSTEM ARCHITECTURE</text>
+  <text x="1340" y="67" class="eyebrow" text-anchor="end">PERSISTENT CYBER INTELLIGENCE</text>
+  <path d="M48 86H1352" stroke="#30f2de" stroke-opacity=".35"/>
+
+  <!-- Intelligence intake and continuity. -->
+  <g transform="translate(48 120)"><rect class="box" width="352" height="90" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">HACKERONE DISCLOSURES</text><text x="20" y="57" class="detail">Public reports + corpus refresh</text><text x="20" y="76" class="detail">Authenticated discovery when configured</text></g>
+  <g transform="translate(480 120)"><rect class="box" width="400" height="90" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">CLAUDE CODE + USER</text><text x="20" y="57" class="detail">Task context, source evidence, intent</text><text x="20" y="76" class="detail">Session hooks + /skmr commands</text></g>
+  <g transform="translate(980 120)"><rect class="box" width="352" height="90" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">SECURITY METHODS</text><text x="20" y="57" class="detail">BugBountySkills + bugskill-ai</text><text x="20" y="76" class="detail">Targeted consultation for research gaps</text></g>
+  <path class="wire" d="M224 210V264"/><path class="wire" d="M680 210V264"/><path class="wire" d="M1156 210V235H820V264"/>
+  <g transform="translate(48 264)"><rect class="box" width="352" height="90" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">DISCLOSURE REVIEW QUEUE</text><text x="20" y="57" class="detail">User-authorized source analysis</text><text x="20" y="76" class="detail">Root cause, conditions, reusable lessons</text></g>
+  <g transform="translate(480 264)"><rect class="box" width="400" height="90" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">SKMR ROUTER</text><text x="20" y="57" class="detail">Context routing + planning + selective recall</text><text x="20" y="76" class="detail">Persistent identity and task coordination</text></g>
+  <g transform="translate(980 264)"><rect class="box" width="352" height="90" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">WORKING MEMORY</text><text x="20" y="57" class="detail">MEMORY.md / session continuity</text><text x="20" y="76" class="detail">Phase, next action, blockers, agent state</text></g>
+  <path class="wire" d="M880 309H976" marker-start="url(#arrow)"/>
+  <text x="928" y="297" text-anchor="middle" class="wire-label">STATE</text>
+
+  <!-- The default two-agent topology. -->
+  <text x="480" y="408" class="eyebrow">TWO-AGENT COORDINATION // COMMANDER–LIEUTENANT</text>
+  <path class="wire" d="M224 354V440"/><path class="wire" d="M680 354V380H1156V440"/>
+  <g transform="translate(48 440)"><rect class="box" width="352" height="96" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">LIEUTENANT / READ</text><text x="20" y="58" class="detail">Investigate + consult shared knowledge</text><text x="20" y="79" class="detail">Propose evidence-backed candidates</text></g>
+  <g transform="translate(480 440)"><rect class="box" width="400" height="96" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">AGENTCOMM</text><text x="20" y="58" class="detail">Authenticated peer messages + tasks</text><text x="20" y="79" class="detail">Candidate exchange + writer confirmation</text></g>
+  <g transform="translate(980 440)"><rect class="box" width="352" height="96" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">COMMANDER / WRITE</text><text x="20" y="58" class="detail">Coordinate + independently verify</text><text x="20" y="79" class="detail">Own the canonical commit decision</text></g>
+  <path class="wire" d="M400 488H476" marker-start="url(#arrow)"/><path class="wire" d="M880 488H976" marker-start="url(#arrow)"/>
+
+  <!-- Controlled promotion into permanent memory. -->
+  <path class="wire" d="M1156 536V588"/>
+  <g transform="translate(980 588)"><rect class="box" width="352" height="90" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">SAVE GATE</text><text x="20" y="57" class="detail">NOVEL + REUSABLE + VERIFIED</text><text x="20" y="76" class="detail">Evidence, duplicates, secrets, integrity</text></g>
+  <path class="wire" d="M1156 678V728"/>
+  <g transform="translate(980 728)"><rect class="box" width="352" height="104" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">CANONICAL WRITER</text><text x="20" y="59" class="detail">Semantic routing + validated preview</text><text x="20" y="82" class="detail">Inspect diff → atomic commit</text></g>
+  <g transform="translate(480 728)"><rect class="box" width="400" height="104" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">OBSIDIAN VAULT</text><text x="20" y="59" class="detail">Durable security knowledge + provenance</text><text x="20" y="82" class="detail">Linked techniques, limitations, lessons</text></g>
+  <g transform="translate(48 728)"><rect class="box" width="352" height="104" rx="3"/><circle class="port" cx="18" cy="21" r="3"/><text x="32" y="28" class="label">HYBRID RECALL</text><text x="20" y="59" class="detail">SQLite index / incremental updates</text><text x="20" y="82" class="detail">BM25 + Ollama / bge-m3 embeddings</text></g>
+  <path class="wire" d="M980 780H884"/><path class="wire" d="M480 780H404"/>
+  <path class="read" d="M600 728V620H224V540"/>
+  <text x="630" y="632" class="wire-label">READ-ONLY VAULT ACCESS</text>
+  <text x="630" y="650" class="wire-label">SMB + CIFS</text>
+  <path class="wire" d="M400 756H440V309H476"/>
+  <text x="426" y="681" class="wire-label" transform="rotate(-90 426 681)">SELECTIVE KNOWLEDGE RECALL</text>
+
+  <path d="M48 866H1332" stroke="#30f2de" stroke-opacity=".35"/>
+  <text x="700" y="898" text-anchor="middle" fill="#30f2de" font-family="monospace" font-size="17" letter-spacing="1.4">INVESTIGATE → EVALUATE → PRESERVE → RECALL</text>
+</svg>

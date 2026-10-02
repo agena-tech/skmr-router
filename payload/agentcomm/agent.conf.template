@@ -1,0 +1,36 @@
+{
+  "self": "{{SELF}}",
+  "peer": "{{PEER}}",
+  "rank": "{{RANK}}",
+  "api_base": "{{API_BASE}}",
+  "api_lan": "http://{{LOCAL_LAN}}:{{PORT}}",
+  "api_fallback": "",
+  "smb_host": "{{SMB_HOST}}",
+  "smb_vault_share": "{{VAULT_NAME}}",
+  "smb_tasks_share": "{{TASKS_SHARE}}",
+  "smb_domain": "{{SMB_DOMAIN}}",
+  "smb_credfile": "{{AGENTCOMM_DIR}}/{{SELF}}.smb.auth",
+  "vault_local": "{{VAULT_LOCAL}}",
+  "tasks_local": "",
+  "fail_seconds": 300,
+  "passive_seconds": 600,
+  "vault_name": "{{VAULT_NAME}}",
+  "vault_permissions": {
+    "{{VAULT_NAME}}": {
+      "{{SELF}}": "{{SELF_ACCESS}}",
+      "{{PEER}}": "{{PEER_ACCESS}}"
+    }
+  },
+  "host_roles": {
+    "{{SELF}}": "{{SELF_HOST_ROLE}}",
+    "{{PEER}}": "{{PEER_HOST_ROLE}}"
+  },
+  "transport_role": "{{SELF_HOST_ROLE}}",
+  "storage_host": "{{STORAGE_HOST}}",
+  "server_local_url": "http://127.0.0.1:{{PORT}}",
+  "listen_port": "{{PORT}}",
+  "peer_api_lan": "http://{{PEER_LAN}}:{{PORT}}",
+  "writer": "{{CLAUDE_DIR}}/skills/skmr/scripts/obsidian_memory.py",
+  "vault_windows_path": "{{VAULT_WINDOWS_PATH}}",
+  "vault_backing": "{{VAULT_BACKING}}"
+}

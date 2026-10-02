@@ -1,0 +1,242 @@
+[
+  {
+    "file": "/root/.claude/CLAUDE.md",
+    "before_sha256": "7e67556dafa8c7b6e17d31079395b39fd8540f1b604f77dc2411c40064069015",
+    "after_sha256": "2d5b590c7471d4fc0d6d39f24831c84cd9c67fca97cca87f0db61c016058f6ce"
+  },
+  {
+    "file": "/root/.claude/SKMR_SETTINGS_FRAGMENT.json",
+    "before_sha256": "c0ff983ae1880d51bd0cf0d4a7bf8a0284ea1703a9671c4a8c2fd854c5a1141b",
+    "after_sha256": "cc69a14b7c73844ac364292c54c50989d8d734a366ac8c66917bb0bf15c7decc"
+  },
+  {
+    "file": "/root/.claude/bin/skmr-runtime.py",
+    "before_sha256": null,
+    "after_sha256": "4ec4079aca0632ea20e0091cf8ae66a402d66d928d4348e6ce39f56dacd56bc6"
+  },
+  {
+    "file": "/root/.claude/bin/skmr-skill-lifecycle.py",
+    "before_sha256": "ae3247edb811a3a599dcd9c6570c15de4b0fe82e255ae24f8145e8efd497679d",
+    "after_sha256": "b465550114984e9060fb04c27edfaa2f36284f3a44ddb767468b6fbadc0ce693"
+  },
+  {
+    "file": "/root/.claude/commands/skmr/state.md",
+    "before_sha256": "1f94e0a0e0f0ca64c59726ad573268ee8a11c21b411df04a1121cdfb423c1be2",
+    "after_sha256": "068b29b258cd01874ba50c7b1271bde8a1a8734781ccff6ebc49dc9372920c93"
+  },
+  {
+    "file": "/root/.claude/rules/skmr-agentcomm.md",
+    "before_sha256": null,
+    "after_sha256": "ac7db60b4882e37d6278ce44220e998996bbd358e19cc6e9cba80d31b4728f58"
+  },
+  {
+    "file": "/root/.claude/rules/skmr-profile.md",
+    "before_sha256": null,
+    "after_sha256": "730352b8d003017f5e945c1be9c07164f04051f5cc93d1ff2681a1525cb03f89"
+  },
+  {
+    "file": "/root/.claude/settings.json",
+    "before_sha256": "57296e2ba401be83619ba64d3f81e9f24235398c43f68b27e0b2449ead3463dd",
+    "after_sha256": "f9d44ed9d1b4285f4c7b8ebb4ce1920e6151adfb15e8361a9650471d5f2e193d"
+  },
+  {
+    "file": "/root/.claude/skills/send/SKILL.md",
+    "before_sha256": "c6a93c7592ad32c11419ddd0a74e8f626a29169ea2389389d3520e0e7ca0c805",
+    "after_sha256": "43d23a4101b4a5484d94782165ac73baaffb0b4f62f4062ad60e112d9abb4ec2"
+  },
+  {
+    "file": "/root/.claude/skills/skmr/SKILL.md",
+    "before_sha256": "39e3fe728de9f5bbe054e4b5c4262a48c4f10984ab6923c89d4e6e3c58a72d43",
+    "after_sha256": "1e3bcfe71bb6ef03fb28a639b3bd2654ee7d237731d953cb31db43f056a225a4"
+  },
+  {
+    "file": "/root/.claude/skmr/README.md",
+    "before_sha256": "809e01abf71d36d40e707726d6fc4b5db4f3276f67e775ce7632d11ba4b71485",
+    "after_sha256": "50007256f1e957b96455105b0666cb52d4cfd55e2284e5ed6ca31fa4d88cc5b1"
+  },
+  {
+    "file": "/root/.claude/skmr/agents/orchestrator.py",
+    "before_sha256": "8ee91b168b63ba6cc5e0e9289dcabaf46c2ed94116835449a61b19e7f1f74475",
+    "after_sha256": "72e556fd3db460a47f7a8a7ee40240134f4ac07b553ec6b5e35593bb6eb5cfae"
+  },
+  {
+    "file": "/root/.claude/skmr/agents/topology.py",
+    "before_sha256": "b1c1af7e5580dc6d10c0c900669dc2eb039f8350b339749ef9699b6f267f666d",
+    "after_sha256": "de4674d3c2b1ff47fcb88a5af39336913fad88713cde67373416ef3da53a98fc"
+  },
+  {
+    "file": "/root/.claude/skmr/commands/assign_role_cmd.py",
+    "before_sha256": "7d663ac772bf8b8359c136d0ae0e5e42cabc7f37db8c0732fff1778a49eac91c",
+    "after_sha256": "1372ea0c81a965713fd4dbda6ab84d6ef8873f78af24928be88fe25d7229abc6"
+  },
+  {
+    "file": "/root/.claude/skmr/commands/bugskills_cmd.py",
+    "before_sha256": "f74a53f57d3741dbf4c35d1ef9eb1330a20fde2b954ddf801292cb74448672b7",
+    "after_sha256": "80bf5d839c9959081c4ad010fd325de29bd966171895b85c268b2901b23cbc90"
+  },
+  {
+    "file": "/root/.claude/skmr/commands/doctor_cmd.py",
+    "before_sha256": "58003fd49b64bcefc52e4729794ddab90d34740c2ef45b9c28fae5fd267c8f8c",
+    "after_sha256": "fb14924633d14d8726613be5e1a20b2464f961ec4c9e1797c4188cd08635cc96"
+  },
+  {
+    "file": "/root/.claude/skmr/commands/hackerone_cmd.py",
+    "before_sha256": "133e12d9637b764239a25a2b62984474bc26f7d65fd9b206f7d2baa3995166b2",
+    "after_sha256": "4fe1cacf7b2d63c8d30577aa9612b65938c4620ec91c584cfc96192f69a38845"
+  },
+  {
+    "file": "/root/.claude/skmr/commands/learn_cmd.py",
+    "before_sha256": "70fbcb045ca8872bcd6194b153a67816d0f4bdec63ffca5be8d59b5704cc2574",
+    "after_sha256": "2dbee4c671d0441bf33fe018696bf2a22cbcfe86f1ad97576d140ad51c0c1ed4"
+  },
+  {
+    "file": "/root/.claude/skmr/commands/obsidian_memory_cmd.py",
+    "before_sha256": "9b307a76dc916d0cd30269c28342142394141801d8be88498b84e9c80ad25c5e",
+    "after_sha256": "0bc8e06f1e5f9f7f92e8f14073eff599aa8f898238b22a5808adb81f7256cc16"
+  },
+  {
+    "file": "/root/.claude/skmr/commands/plan_cmd.py",
+    "before_sha256": "e65ef6118c250665474c208854af38ec59e0daf757becc2d65d417a32b7593e9",
+    "after_sha256": "e6e3ad11d4eb78fa46fe530879437c2fcfb91fe1f74503c078d2e34704294f6f"
+  },
+  {
+    "file": "/root/.claude/skmr/commands/send_cmd.py",
+    "before_sha256": "c22f53ca249c9fc540ac76baa52c6e886a886d8e1157afa69cc6a5c9cd2a567e",
+    "after_sha256": "786eacb6bfaaa1bcc9a7d180a7c57a8c49a406d89603c255a48e4dde09940062"
+  },
+  {
+    "file": "/root/.claude/skmr/commands/state_cmd.py",
+    "before_sha256": "c7b40e5d508a1fec6860bc14b31d785d034757447dc670a6684f245d84411c0a",
+    "after_sha256": "b09919e2f831e17ad9cd1a80e41b7459981871d55e1aa49518280f6b105a6ee8"
+  },
+  {
+    "file": "/root/.claude/skmr/config/skmr.json",
+    "before_sha256": "faa8488b0ccde141254f435ef6828a5206cd77e0b83fef0587cafed93030ecb3",
+    "after_sha256": "9f024322aa2a62fea6469675c2f3e27202211a769c6fc1412cbfa325c4ce19d0"
+  },
+  {
+    "file": "/root/.claude/skmr/core/config.py",
+    "before_sha256": "5ad278c4a71d868794d98b37fe4ca68b61b663825cdd47407fb95146594cd43b",
+    "after_sha256": "3fe1517bc308b20bb848728bd6db68c1a2fffdc45c41664256fbecfcfe730970"
+  },
+  {
+    "file": "/root/.claude/skmr/core/dispatcher.py",
+    "before_sha256": "817bcdbec9f0e5fbba76ad5f851f927e66029368bc7b8c0b8ce11df0e9ea58af",
+    "after_sha256": "9bb99e918112379e82c9040e5a2cd7308e0dcbad3ab102b712df36459542cbc8"
+  },
+  {
+    "file": "/root/.claude/skmr/core/output.py",
+    "before_sha256": "b5d24bc7b77bf7f8259db619079eb47f568f9bc86c25e3a1880e41368ac37c78",
+    "after_sha256": "85a3e92be0898c00cf690b2a5d4d2c8590b6298991d03a6d1a04b536ee31746c"
+  },
+  {
+    "file": "/root/.claude/skmr/core/registry.py",
+    "before_sha256": "f90aeed174815a555e36263f89947a67d76b0a4a574df556cd015171f19731e4",
+    "after_sha256": "ca3117b8c86d4f99b84fe350db3194bf5191f77bda679892b2076386d03960ae"
+  },
+  {
+    "file": "/root/.claude/skmr/hooks/planning.py",
+    "before_sha256": "96eae34850259b6a01c69b4522633a4249bc07997460aafd9727dfce73125f89",
+    "after_sha256": "db75cd050b8dc50b144871443cef2f109c9d9e3e2b8405b3bd62932c105d2aeb"
+  },
+  {
+    "file": "/root/.claude/skmr/hooks/runtime.py",
+    "before_sha256": "a74ffbc97d46d3fe01f8f0a39f8c6bbb1cbe8996ad4fe992ba8162ce130bea5b",
+    "after_sha256": "e7fa3f8910ffb00acf4e75b76c6309d29b646ce63f31cf9cbdd73e416438ae93"
+  },
+  {
+    "file": "/root/.claude/skmr/memory/indexing/index.py",
+    "before_sha256": "2565befa68fc6496ade51b8cc06e198b8c5f9b53f25018f94910ac35c4fa9263",
+    "after_sha256": "d619ccd39e2f2c07b80652b122cb57c567c44040bcaeefc2f17b9d7b7b9e35b4"
+  },
+  {
+    "file": "/root/.claude/skmr/memory/intent.py",
+    "before_sha256": "e812bb8cd06c855e5f6b36f2ccfb37b6e80286c37ec9fe76138cba272ef4676e",
+    "after_sha256": "75859f2ff6a326129411c9d020e664fc69e7214a010fddd9705eb030de513cc5"
+  },
+  {
+    "file": "/root/.claude/skmr/memory/learning.py",
+    "before_sha256": "a61679037a3c1f4a316cddaf18549ccafb484856b7f095c9cf7d96e788facf70",
+    "after_sha256": "cf085a94ebcfd263ad1190d55445b7a6f47d05f762468c434dda1cad7f7de62a"
+  },
+  {
+    "file": "/root/.claude/skmr/memory/native.py",
+    "before_sha256": "644467bb1e5f256b2d369d473ba42289ade84dabe627267864ee87ac3dd5dc38",
+    "after_sha256": "b44985912886e96820e6faba0a7aec5a8115c9eedb5d5bceb6569159ecda2c7a"
+  },
+  {
+    "file": "/root/.claude/skmr/memory/retrieval/embeddings.py",
+    "before_sha256": "b735e8d270e30759cd24792c016c30fe9b6a04fa3ca09529611c4eabfe236053",
+    "after_sha256": "cf8112a0d00ac6838ae0172dc996516792b966a9b2dbe5fd7997485ef8a303c9"
+  },
+  {
+    "file": "/root/.claude/skmr/memory/retrieval/hybrid.py",
+    "before_sha256": "736e2c677349fb9cc24808bec454e7042579e638262286ea8c76bc43f53a7b96",
+    "after_sha256": "715b0e7fcb3e691c9b0baa7c443abadc508b562cbc1ed23acd8cfce7bdf24f84"
+  },
+  {
+    "file": "/root/.claude/skmr/memory/retrieval/tokenizer.py",
+    "before_sha256": "28c6fa25e8fa7fa59f8a6b2cdf0dca4412cbd71045002038c6ae9cb44666455f",
+    "after_sha256": "1a3603cd73154c35dcc641c6c22627047f1b989e710a38c5d7ee429d258349a6"
+  },
+  {
+    "file": "/root/.claude/skmr/memory/retrieval/vector.py",
+    "before_sha256": "6e3737e1b19cc55ad941874114521f43b5de4cf7f15d2e60a9f9d86d88ac52d2",
+    "after_sha256": "dcb3b8ff29f9db90cbe873a0cde7fb1d64bfdbfc33ff1a243e5b436fdb0ac0a0"
+  },
+  {
+    "file": "/root/.claude/skmr/planning/planner.py",
+    "before_sha256": "f9184b3398d334ea5d07345df1f3939bc7e3ab7a8a81843fc040c5ee4a1731aa",
+    "after_sha256": "b723131a6a0079e8651eee4182516439378210250e0a2171d150616474018175"
+  },
+  {
+    "file": "/root/.claude/skmr/tests/run_all.py",
+    "before_sha256": "7adbe8476970fc223fb74947d955cffdd480eb02f431d514234dabc79b6a2541",
+    "after_sha256": "3a295cbfa8000789ddfb2a669f9e28592a8f545064abecc199942da10fb747a5"
+  },
+  {
+    "file": "/root/.claude/skmr/tests/test_audit_regressions.py",
+    "before_sha256": "39d405ade159133333bb3ddb63a195150530371f2c2136d8c8e87eab1cc763d4",
+    "after_sha256": "90743f7dd073110b9a4f760e6739296a0b95ed35e37b41a65ea0bd12690228e1"
+  },
+  {
+    "file": "/root/.claude/skmr/tests/test_failures.py",
+    "before_sha256": "f661d14faef1ce8575525036d557873375381bd004c655474b77bddb9aa60257",
+    "after_sha256": "1b96f83a063080833af240ed8ac1df6d02140212f8d5ba302eed09bec7ed1963"
+  },
+  {
+    "file": "/root/.claude/skmr/tests/test_index.py",
+    "before_sha256": "7e83b852aa31817d3eedaecffd76791aead576535994c754f4ff24c1f4ebf07c",
+    "after_sha256": "77a1fdea9dd87382ed1dbb414b43c314d984b7141a356025c5a441d95f94e0c5"
+  },
+  {
+    "file": "/root/.claude/skmr/tests/test_policy_coverage.py",
+    "before_sha256": "439c55d6c21ddd83fae6deeaac58686ba2c34bcb1ad80ea22ff1d8ec17501699",
+    "after_sha256": "f49adc591ad3ec1e2ffcdca314695d7b707edcbe732f4a0ff9ee3dd82d68f70f"
+  },
+  {
+    "file": "/root/.claude/skmr/tests/test_system.py",
+    "before_sha256": "1071e8eb86d892cfc0cbaecafad3d4bb6b44082c4348ebfdcaea6355d57f3973",
+    "after_sha256": "61c1c2dcc0e16dbefffcd15c92f037872740c1333f26025fa09ec3ff5f43f981"
+  },
+  {
+    "file": "/root/.claude/skmr/tests/verify_checklist.py",
+    "before_sha256": "b4336102890d914fe38b32fb8305bff2a0af4a35a14a64d941ee8e411a4205d7",
+    "after_sha256": "3d1078ff902356a9b62996a8ff60ce1903a58b713d484cb817cecf97e8a5df5f"
+  },
+  {
+    "file": "/root/.claude/tests/test_skmr_profile_hardening.py",
+    "before_sha256": "cb49255016b0b5255402ff69c78eed48c2581a02bd9ab4196de689c1900583f0",
+    "after_sha256": "5db2a50fb0130fa13ca626ce46e502e5f76227c4adbb3194328671e9914e8d45"
+  },
+  {
+    "file": "/root/.claude/tests/test_skmr_profiles.py",
+    "before_sha256": "062b931f0267b571a89520863fec70cfe6757795ac8c9e17fafad522d80da39b",
+    "after_sha256": "e49baac5826446d453a5cc032b53d05cefd99be462ca353a1ea27cc4a4f465e8"
+  },
+  {
+    "file": "/root/.claude/tests/test_skmr_security_registry.py",
+    "before_sha256": "028b149d245b64d2d61a3a8947d237ee8f9e0f9620778139f22172adffd9b9e6",
+    "after_sha256": "6686d21a95e5b07a679ec3287b08660d5bf5660a4085d2dcf549d5fff0d6714f"
+  }
+]

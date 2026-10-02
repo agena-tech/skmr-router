@@ -1,0 +1,265 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(bugbountyskills)",
+      "Skill(bugbountyskills *)",
+      "Skill(hackerone-intelligence)",
+      "Skill(hackerone-intelligence *)",
+      "Skill(403Bypass)",
+      "Skill(403Bypass *)",
+      "Skill(ApexDiscovery)",
+      "Skill(ApexDiscovery *)",
+      "Skill(AsnRecon)",
+      "Skill(AsnRecon *)",
+      "Skill(bac-analyzer)",
+      "Skill(bac-analyzer *)",
+      "Skill(BugBountyWorkflow)",
+      "Skill(BugBountyWorkflow *)",
+      "Skill(CacheDeception)",
+      "Skill(CacheDeception *)",
+      "Skill(crawl)",
+      "Skill(crawl *)",
+      "Skill(jsa)",
+      "Skill(jsa *)",
+      "Skill(JsAnalyzer)",
+      "Skill(JsAnalyzer *)",
+      "Skill(osint-enrich)",
+      "Skill(osint-enrich *)",
+      "Skill(pulse-template)",
+      "Skill(pulse-template *)",
+      "Skill(SubdomainEnum)",
+      "Skill(SubdomainEnum *)",
+      "Skill(TabletopExercise)",
+      "Skill(TabletopExercise *)",
+      "Skill(otp-bruteforce-testing)",
+      "Skill(otp-bruteforce-testing *)",
+      "Skill(stack-bounds-format-auditing)",
+      "Skill(stack-bounds-format-auditing *)",
+      "Skill(url-parser-confusion-testing)",
+      "Skill(url-parser-confusion-testing *)",
+      "Bash(/usr/bin/python3 {{CLAUDE_DIR}}/skills/skmr/scripts/obsidian_memory.py *)",
+      "Bash(/usr/bin/python3 {{CLAUDE_DIR}}/bin/security-report-queue.py *)",
+      "Bash(/usr/bin/python3 {{CLAUDE_DIR}}/skmr/cli.py *)"
+    ],
+    "additionalDirectories": [
+      "{{CLAUDE_DIR}}/knowledge/BugBountySkills",
+      "{{CLAUDE_DIR}}/knowledge/bugskill-ai",
+      "{{CLAUDE_DIR}}/knowledge/bugskill-ai-data",
+      "/mnt/eliza-vault",
+      "/root/agentcomm"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|fork",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/security-kb-session-start.py"
+            ],
+            "timeout": 300,
+            "statusMessage": "SKMR kaynakları doğrulanıyor"
+          }
+        ]
+      },
+      {
+        "matcher": "startup|resume|fork",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/agent-message-watcher.py"
+            ],
+            "timeout": 86400,
+            "statusMessage": "Peer mesaj izleniyor",
+            "asyncRewake": true
+          }
+        ]
+      },
+      {
+        "matcher": "startup|resume|fork|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/skmr-runtime.py"
+            ],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/security-workflow-reminder.py"
+            ]
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/skmr-runtime.py"
+            ],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/security-failure-reminder.py"
+            ]
+          }
+        ]
+      },
+      {
+        "matcher": "Skill|Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/skmr-runtime.py"
+            ],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/security-pending-stop.py"
+            ]
+          },
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/agent-message-watcher.py"
+            ],
+            "timeout": 86400,
+            "statusMessage": "Peer mesaj izleniyor",
+            "asyncRewake": true
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Skill|Bash|Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/security-consultation-guard.py"
+            ]
+          }
+        ]
+      },
+      {
+        "matcher": "Skill|Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/skmr-runtime.py"
+            ],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/security-context-reminder.py"
+            ]
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/skmr-runtime.py"
+            ],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Skill|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/security-consultation-guard.py"
+            ]
+          }
+        ]
+      },
+      {
+        "matcher": "Skill|Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/skmr-runtime.py"
+            ],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3",
+            "args": [
+              "{{CLAUDE_DIR}}/bin/skmr-runtime.py"
+            ],
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

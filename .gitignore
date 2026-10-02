@@ -1,0 +1,24 @@
+# Local metadata from the bundled knowledge repositories
+**/.git/
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Installation/runtime credentials and local configuration
+.env
+.env.*
+!.env.example
+join.json
+*.smb.auth
+agent.conf
+auto-install.json
+docker-install.json
+id_rsa
+id_ed25519
+
+# Backups created while updating existing installations
+*.skmr-bak-*
