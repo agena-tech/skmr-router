@@ -6,6 +6,8 @@
 
 **SKMR is a persistent intelligence management layer for Claude Code, designed to preserve research continuity, retain verified security knowledge, and coordinate two collaborating agents.** It connects the immediate context of an investigation with an external memory system that remains available across sessions.
 
+# [Watch for the full installation video:](https://www.youtube.com/watch?v=z-4xg8m6OmA)
+
 AI-assisted security research is constrained by the temporary nature of conversational context. As sessions end or context is compressed, an agent can lose the reasoning behind earlier decisions, repeat unsuccessful approaches, or reconstruct knowledge that was already established. SKMR addresses this problem through two complementary forms of persistence: working memory records the state of an investigation, while an Obsidian vault preserves reusable knowledge, its provenance, and its relationships to other findings.
 
 The project also supports **disclosure-driven learning**. Its security knowledge pipeline refreshes a local corpus of public HackerOne reports through repository snapshots and, when API credentials are configured, authenticated disclosure discovery. Newly discovered reports enter a review queue; refreshed report material supplies additional research evidence. Once the user authorizes review, the agent examines the source, identifies the underlying mechanism and prerequisites, and extracts generalized methods or limitations. Insights that satisfy **NOVEL + REUSABLE + VERIFIED** are preserved through a guarded permanent-memory workflow. Learning therefore accumulates as evidence-backed knowledge that can inform future investigations.
