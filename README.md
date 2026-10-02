@@ -6,7 +6,7 @@
 
 **SKMR is a persistent intelligence management layer for Claude Code, designed to preserve research continuity, retain verified security knowledge, and coordinate two collaborating agents.** It connects the immediate context of an investigation with an external memory system that remains available across sessions.
 
-# [Watch for the full installation video:](https://www.youtube.com/watch?v=z-4xg8m6OmA)
+### [Watch for the full installation video](https://www.youtube.com/watch?v=z-4xg8m6OmA)
 
 AI-assisted security research is constrained by the temporary nature of conversational context. As sessions end or context is compressed, an agent can lose the reasoning behind earlier decisions, repeat unsuccessful approaches, or reconstruct knowledge that was already established. SKMR addresses this problem through two complementary forms of persistence: working memory records the state of an investigation, while an Obsidian vault preserves reusable knowledge, its provenance, and its relationships to other findings.
 
