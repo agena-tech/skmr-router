@@ -84,7 +84,7 @@ The installer copies the bundled **`00 System`** directory into each selected WR
 
 Project introductions and easy installation walkthroughs are available on **anezatra_official**:
 
-[![YouTube — anezatra_official](https://img.shields.io/badge/YouTube-%40anezatra_official-FF0033?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@anezatra_official)
+[![YouTube — anezatra_official](https://img.shields.io/badge/YouTube-%40anezatra_official-FF0033?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=z-4xg8m6OmA)
 
 [Visit the official YouTube channel](https://www.youtube.com/@anezatra_official)
 
