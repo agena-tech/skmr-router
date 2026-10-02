@@ -1,4 +1,4 @@
-# Advanced Cyber Intelligence Management Layer: SKMR (Security Knowledge Memory Router)
+# Advanced Cyber Intelligence Management Layer: SKMR (Security Knowledge Memory Router) 🧠
 
 ![SKMR — Security Knowledge Memory Router](images/banner.jpg)
 
