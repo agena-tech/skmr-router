@@ -774,5 +774,107 @@ class VaultSystemInstallTests(unittest.TestCase):
         self.assertFalse((destination / "Home.md").exists())
 
 
+class AutoUninstallTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.plan = Path(self.temp.name) / ".skmr" / "docker-install.json"
+        self.plan.parent.mkdir()
+        self.plan.write_text(json.dumps({"agents": [{"container": "kali-lab"},
+                                                   {"container": "ubuntu-lab"}],
+                                         "network": "skmr-labs"}))
+        self.backup = self.plan.with_name("docker-install.json.skmr-bak-123")
+        self.backup.write_text(self.plan.read_text())
+        self.foreign_backup = self.plan.with_name("docker-install.json.skmr-bak-foreign")
+        self.foreign_backup.write_text("user backup")
+        self.unrelated = self.plan.parent / "other.txt"
+        self.unrelated.write_text("keep")
+        self.calls = []
+        self.labels = {"org.skmr.installer": "auto"}
+        self.present = {"kali-lab", "ubuntu-lab", "skmr-labs"}
+
+    def docker_run(self, argv, **_kwargs):
+        command = tuple(argv[1:])
+        self.calls.append(command)
+        if command[:2] == ("container", "inspect"):
+            name = command[2]
+            if name not in self.present:
+                return subprocess.CompletedProcess(argv, 1, "", f"No such container: {name}")
+            item = {"Id": name + "-id", "Config": {"Labels": self.labels}}
+            return subprocess.CompletedProcess(argv, 0, json.dumps([item]), "")
+        if command[:2] == ("network", "inspect"):
+            if "skmr-labs" not in self.present:
+                return subprocess.CompletedProcess(argv, 1, "", "network skmr-labs not found")
+            item = {"Id": "skmr-network-id", "Labels": self.labels}
+            return subprocess.CompletedProcess(argv, 0, json.dumps([item]), "")
+        return subprocess.CompletedProcess(argv, 0, "", "")
+
+    def invoke(self, dry_run=False):
+        report = installer.Report()
+        with patch.object(installer, "docker_prefix", return_value=["docker"]), \
+             patch.object(installer, "run", side_effect=self.docker_run), \
+             contextlib.redirect_stdout(io.StringIO()):
+            installer.uninstall_auto_resources(report, dry_run, self.plan)
+        return report
+
+    def test_removes_managed_labs_then_network_and_plan_only(self):
+        report = self.invoke()
+        self.assertFalse(report.failed, report.render())
+        mutations = [call for call in self.calls if call[0] in ("rm", "network")
+                     and call[:2] != ("network", "inspect")]
+        self.assertEqual(mutations, [
+            ("rm", "-f", "-v", "kali-lab-id"),
+            ("rm", "-f", "-v", "ubuntu-lab-id"),
+            ("network", "rm", "skmr-network-id")])
+        self.assertFalse(self.plan.exists())
+        self.assertFalse(self.backup.exists())
+        self.assertEqual(self.foreign_backup.read_text(), "user backup")
+        self.assertEqual(self.unrelated.read_text(), "keep")
+
+    def test_dry_run_reports_resources_without_deleting_them(self):
+        report = self.invoke(dry_run=True)
+        self.assertFalse(report.failed, report.render())
+        self.assertFalse(any(call[0] == "rm" or call[:2] == ("network", "rm")
+                             for call in self.calls))
+        self.assertTrue(self.plan.exists())
+        self.assertTrue(self.backup.exists())
+
+    def test_unmanaged_named_container_blocks_cleanup(self):
+        self.labels = {"some.other.owner": "yes"}
+        report = self.invoke()
+        self.assertTrue(report.failed)
+        self.assertFalse(any(call[0] == "rm" or call[:2] == ("network", "rm")
+                             for call in self.calls))
+        self.assertTrue(self.plan.exists())
+
+    def test_old_plan_is_removed_even_after_labs_were_manually_deleted(self):
+        self.present.clear()
+        report = self.invoke()
+        self.assertFalse(report.failed, report.render())
+        self.assertFalse(self.plan.exists())
+        self.assertFalse(self.backup.exists())
+
+    def test_docker_unavailable_preserves_plan_and_reports_failure(self):
+        report = installer.Report()
+        with patch.object(installer, "docker_prefix", side_effect=installer.AutoInstallError("Docker unavailable")):
+            installer.uninstall_auto_resources(report, False, self.plan)
+        self.assertTrue(report.failed)
+        self.assertTrue(self.plan.exists())
+
+    def test_unrecognized_plan_is_preserved(self):
+        self.plan.write_text("user content")
+        report = self.invoke()
+        self.assertTrue(report.failed)
+        self.assertTrue(self.plan.exists())
+        self.assertFalse(any(call[0] == "rm" or call[:2] == ("network", "rm")
+                             for call in self.calls))
+
+    def test_non_object_json_plan_is_preserved(self):
+        self.plan.write_text("[]")
+        report = self.invoke()
+        self.assertTrue(report.failed)
+        self.assertEqual(self.plan.read_text(), "[]")
+
+
 if __name__ == "__main__":
     unittest.main()

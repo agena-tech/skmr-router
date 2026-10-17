@@ -82,6 +82,8 @@ An otherwise empty Obsidian vault is a valid starting point. The installer copie
 - **[Full Auto Installation Guide](docs/install_full_auto.md)** — Docker provisioning, agent setup, vault connections, and startup.
 - **[Manual Installation Guide](docs/install_manual.md)** — local installation, remote peers, and operator-managed configuration.
 
+To remove an auto installation before a clean rebuild, run `sudo python3 install.py --uninstall` from the project directory. It removes only SKMR-labelled labs and their network, plus the saved auto-install plan; your Obsidian vault stays in place.
+
 ## Introduction & Easy Setup
 
 Project introductions and easy installation walkthroughs are available on **anezatra_official**:

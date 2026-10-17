@@ -4,8 +4,8 @@
   "sha256": {
     ".knowledge-copy.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     ".knowledge-copy.status": "c4f0f0c2ea93675c9f36d2b2c984f770d91e70f8b6247395242acabc205685de",
-    "README.md": "1fcfddd5584416849f97e587eebb3fccfd85580f43ded1637b743e8f75328b32",
-    "install.py": "bbcc2d4d887e9146586bfebfd63e836edd477a5d6c345b965ee8d68b5b93e9f2",
+    "README.md": "23b8a03c71c1b83ee88de1c770e1a4d81d670e25228436aec11019a1cdbd374a",
+    "install.py": "037fe45b93caba820f9d4009d4b9579923970348eb9b91ca1b5748498465a778",
     "payload/agentcomm/README.md": "801d1c878dcf8ca384199a475fa91975e10a81ad076701a75d06203dd4a210db",
     "payload/agentcomm/agent.conf.template": "f5a1bd800a40e651744a4c2f8e0373ad1509e7bf9cb456cca72bbd20e03efa39",
     "payload/agentcomm/agentcomm.service": "c00a35283c75ecf08df4b4295256856570016f7fb0b53e35310ef2d47f761d04",
@@ -133,11 +133,11 @@
     "payload/vault/00 System/Knowledge Map.md": "7cffbe59c4c5b2bde9e594eff88bbae2f5ba9e7e931f0e46227c999bed8bb1c2",
     "payload/vault/00 System/SKMR/SKMR.md": "d3aa444784bb1f01911860238dd5152c811cae882d957a2a944effddd0a066df",
     "payload/vault/00 System/AgentMemory.md.template": "b574aab5c056ed911ded397b36f484638da9f6c81d1ab24ce8e9a37cc2bf0017",
-    "tests/test_installer.py": "154428bc9f81eb2f4a2c8fd9a28ef753b0116503b6b1a2cb1c262b93d1d617c5",
+    "tests/test_installer.py": "55498abdff6982ba63d84e61b71200342d146b71e9643366c05a383aaaad33a1",
     "images/banner.jpg": "6d72ebd71ee38c4d3dec63188856ce76f50a421b00401bd2e273954bf19cc5d8",
     "images/architecture.svg": "e3ca6947e50b524355dce6dbdf2993ddb441149d7098e63e98f4a7ff7077773b",
-    "docs/install_full_auto.md": "75d1ebef272f9841e95322caaef13778d8664c091845acd6fa69468f9fad675f",
-    "docs/install_manual.md": "00c0ce953dd03b4df7b106b0bc42490cacce8793679c110caaa1a91fc23cc07b",
+    "docs/install_full_auto.md": "95757c22fd922d3ecebf02094dbdf5658bafe3390c007e966817981e1950de92",
+    "docs/install_manual.md": "5cad835de60ce8a19dd934b06d4c9b80fc10ea34720f40ad700e738ff34be484",
     ".gitignore": "b55a53ece4d8f0394eef546a9195a7394e3a2ef21303e66f9aca9340d45b8621"
   }
 }

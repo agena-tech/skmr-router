@@ -8,7 +8,7 @@ Run it from the directory that contains it:
     sudo python3 install.py --method B      # manual Linux installation
     sudo python3 install.py --dry-run       # show every action, change nothing
     sudo python3 install.py --check         # verify an existing installation
-    sudo python3 install.py --uninstall     # remove what this installer added
+    sudo python3 install.py --uninstall     # remove managed labs and host payload
 
 What it does, in order:
 
@@ -1945,11 +1945,14 @@ def verify(claude_dir: Path, agentcomm_dir: Path, vault: Path | None,
 def uninstall(claude_dir: Path, agentcomm_dir: Path, report: Report,
               dry_run: bool) -> None:
     step("Uninstall")
-    say(f"    {NEON_ORANGE}This removes the SKMR files, hooks and policy block.{RESET}")
-    note("Your Obsidian vault, agent.conf, knowledge repositories and shell")
-    note("profile are left alone.")
+    say(f"    {NEON_ORANGE}This removes SKMR-managed Docker labs and host files.{RESET}")
+    note("Your Obsidian vault, Docker base images, agent.conf, knowledge")
+    note("repositories and shell profile are left alone.")
     if not dry_run and not ask_yes("Proceed?", False):
         report.add("skip", "uninstall", "declined")
+        return
+    uninstall_auto_resources(report, dry_run, Path.home() / ".skmr" / "docker-install.json")
+    if report.failed:
         return
     removed = 0
     for _, relative in payload_files():
@@ -1996,8 +1999,8 @@ def uninstall(claude_dir: Path, agentcomm_dir: Path, report: Report,
             _, _, tail = rest.partition(POLICY_END)
             backup(instructions)
             atomic_write(instructions, head.rstrip() + "\n" + tail.lstrip("\n"))
-    report.add("skip" if dry_run else "ok", "uninstall",
-               f"{removed} files {'would be ' if dry_run else ''}removed")
+    report.add("skip" if dry_run else "ok", "host payload",
+               f"{removed} host files {'would be ' if dry_run else ''}removed")
 
 
 # ---------------------------------------------------------------------- check
@@ -2205,6 +2208,87 @@ def docker_checked(prefix: list[str], argv: list[str], *, timeout: int = 1800,
         detail = (result.stderr or result.stdout or "no output").strip()[-1200:]
         raise AutoInstallError(f"Docker operation failed (exit {result.returncode}): {detail}")
     return result.stdout.strip()
+
+
+def uninstall_auto_resources(report: Report, dry_run: bool, plan_path: Path) -> None:
+    """Remove only Docker resources labelled as created by full auto."""
+    try:
+        prefix = docker_prefix()
+    except AutoInstallError as error:
+        if plan_path.exists():
+            report.add("fail", "Docker full auto", f"{error}; saved plan retained at {plan_path}")
+        else:
+            report.add("skip", "Docker full auto", "Docker unavailable; no saved auto plan")
+        return
+
+    def inspect(kind: str, name: str) -> str | None:
+        result = run([*prefix, kind, "inspect", name], timeout=60)
+        if result.returncode:
+            detail = (result.stderr or result.stdout).casefold()
+            if "no such" in detail or "not found" in detail:
+                return None
+            raise AutoInstallError(f"could not inspect {kind} {name}: "
+                                   f"{(result.stderr or result.stdout).strip()[:180]}")
+        try:
+            details = json.loads(result.stdout)
+            item = details[0]
+            labels = item["Config"].get("Labels") if kind == "container" else item.get("Labels")
+            identity = item["Id"]
+        except (ValueError, KeyError, IndexError, TypeError) as error:
+            raise AutoInstallError(f"invalid Docker inspection for {kind} {name}") from error
+        if not isinstance(labels, dict) or labels.get("org.skmr.installer") != "auto":
+            raise AutoInstallError(f"{kind} {name} is not SKMR-managed; left intact")
+        if not isinstance(identity, str) or not identity:
+            raise AutoInstallError(f"invalid Docker ID for {kind} {name}")
+        return identity
+
+    try:
+        labs = [(name, identity) for name in ("kali-lab", "ubuntu-lab")
+                if (identity := inspect("container", name)) is not None]
+        network_id = inspect("network", AUTO_NETWORK)
+    except AutoInstallError as error:
+        report.add("fail", "Docker full auto", str(error))
+        return
+
+    def is_auto_plan(path: Path) -> bool:
+        if path.is_symlink() or not path.is_file():
+            return False
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return False
+        if not isinstance(value, dict) or value.get("network") != AUTO_NETWORK:
+            return False
+        agents = value.get("agents")
+        return (isinstance(agents, list) and len(agents) == 2
+                and {agent.get("container") for agent in agents if isinstance(agent, dict)}
+                == {"kali-lab", "ubuntu-lab"})
+
+    if (plan_path.exists() or plan_path.is_symlink()) and not is_auto_plan(plan_path):
+        report.add("fail", "Docker full auto", f"unrecognized saved plan left intact: {plan_path}")
+        return
+    plans = [plan_path] if plan_path.is_file() else []
+    if plan_path.parent.is_dir():
+        plans.extend(path for path in plan_path.parent.glob(plan_path.name + ".skmr-bak-*")
+                     if is_auto_plan(path))
+    detail = f"{len(labs)} labs, {int(network_id is not None)} network, {len(plans)} plan files"
+    if dry_run:
+        report.add("skip", "Docker full auto", f"would remove {detail}")
+        return
+
+    try:
+        for name, identity in labs:
+            docker_checked(prefix, ["rm", "-f", "-v", identity], timeout=300)
+            note(f"Removed SKMR-managed {name}")
+        if network_id is not None:
+            docker_checked(prefix, ["network", "rm", network_id], timeout=120)
+        for path in plans:
+            path.unlink()
+    except (AutoInstallError, OSError) as error:
+        report.add("fail", "Docker full auto", str(error))
+        return
+    report.add("ok" if labs or network_id or plans else "skip", "Docker full auto",
+               f"removed {detail}" if labs or network_id or plans else "no managed resources found")
 
 
 def install_claude(report: Report) -> None:

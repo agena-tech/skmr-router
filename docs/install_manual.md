@@ -443,7 +443,7 @@ Do not invent a tunnel URL or store a temporary public URL as the permanent LAN 
 | `--dry-run` | Show planned actions without installing or writing files. |
 | `--check` | Check an existing installation; does not perform the complete doctor/test workflow. |
 | `--rotate-secrets` | Replace existing transport/SMB secrets; the peer then needs a new join and refreshed SMB credentials. |
-| `--uninstall` | Remove installer-managed SKMR payload, hooks, and policy after its confirmation prompt. |
+| `--uninstall` | Remove SKMR-managed Docker labs/network and saved auto plan first, then host payload, hooks and policy after its confirmation prompt. `--dry-run --uninstall` previews the action. |
 
 Normal reinstallation preserves an existing matching token pair. Keep a backup of your configuration before making intentional identity, path, or secret changes. Uninstall leaves the Obsidian vault, `agent.conf`, knowledge repositories, and shell profile in place; it is not a complete data purge.
 

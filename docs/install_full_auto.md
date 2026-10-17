@@ -261,10 +261,11 @@ Method A requires the full interactive workflow. It cannot be combined with `--n
 
 ### Explicit clean rebuild
 
-If you intentionally want to discard both labs and start again, first preserve any container-local data you need. The following command deletes the containers and their writable layers. The host vault directories used as bind mounts remain on the host.
+If you intentionally want to discard both labs and start again, first preserve any container-local data you need. Run the installer as the same Linux user that performed installation (normally with `sudo`):
 
 ```bash
-sudo docker rm -f kali-lab ubuntu-lab
+sudo python3 install.py --dry-run --uninstall  # preview
+sudo python3 install.py --uninstall            # confirm removal
 ```
 
-Then launch method A again from the complete project directory. These reset commands are an operator choice, not a routine verification step.
+Uninstall verifies the SKMR ownership label before deleting `kali-lab`, `ubuntu-lab` and `skmr-labs`. It removes their container writable layers and anonymous volumes, then the saved auto-install plan and recognized plan backups under `~/.skmr/`. It also removes any SKMR host payload installed under the current account. It leaves Obsidian vaults, Docker base images, unrecognized files, `agent.conf`, knowledge repositories and the shell profile alone. If the labs were already removed manually, the saved plan is still cleaned up. Then launch method A again from the complete project directory.
