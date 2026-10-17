@@ -1,0 +1,19 @@
+---
+title: "{{MEMORY_NAME}}"
+type: "system"
+area: "system"
+status: "template"
+updated: 2026-10-17
+tags:
+  - "system"
+  - "memory"
+---
+
+# {{MEMORY_NAME}}
+
+{{MEMORY_NAME}} is this agent's canonical permanent knowledge vault. It uses PARA folders and a selective Obsidian knowledge graph.
+
+## Related
+
+- [[Knowledge Map]]
+- [[SKMR]]

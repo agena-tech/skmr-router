@@ -501,6 +501,13 @@ class VaultStore:
                 continue
             if path.is_symlink() or not path.is_file():
                 continue
+            # Obsidian can leave an empty draft in a newly created vault.
+            # It is not permanent knowledge yet, so do not let it make the
+            # whole SKMR vault fail validation or appear in the search index.
+            # Keep empty managed system notes visible to the validator.
+            if (relative.parts[0] != "00 System" and path.stat().st_size <= 4096
+                    and not path.read_text(encoding="utf-8", errors="replace").strip()):
+                continue
             result.append(path)
         return sorted(result)
 

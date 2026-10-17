@@ -15,6 +15,6 @@ SKMR is a lazy knowledge router and quality gate. Current context comes first; p
 
 ## Related
 
-- [[SondraMemory]]
+- [[{{MEMORY_NAME}}]]
 - [[Security MOC]]
 - [[Working Style]]

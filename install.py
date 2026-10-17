@@ -26,7 +26,7 @@ the peer's exported vault is always mounted read-only. Claude login is manual.
      AgentComm directory,
   5. merges the SKMR hook and permission wiring into settings.json without
      discarding what is already there,
-  6. places the bundled BugBountySkills and bugskill-ai repositories,
+  6. clones and verifies the BugBountySkills and bugskill-ai repositories,
   7. asks for the Obsidian vault path and refuses a directory that is not a vault,
   8. asks for a HackerOne API credential, shows where to create one, and
      persists it to the user's shell profile,
@@ -65,6 +65,13 @@ HERE = Path(__file__).resolve().parent
 PAYLOAD = HERE / "payload"
 KNOWLEDGE_SRC = HERE / "knowledge"
 VAULT_SYSTEM_SRC = PAYLOAD / "vault" / "00 System"
+DEFAULT_OBSIDIAN_WELCOME = (
+    "This is your new *vault*.\n\n"
+    "Make a note of something, [[create a link]], or try "
+    "[the Importer](obsidian://show-plugin?id=obsidian-importer)!\n\n"
+    "When you're ready, delete this note and make the vault your own."
+)
+LEGACY_SONDRA_MEMORY_SHA256 = "5742510b53a83f933244737c70439560f76adba51fde2844c45c069bc1a29a9f"
 
 RESET = "\033[0m"
 NEON_GREEN = "\033[1;38;2;57;255;20m"
@@ -616,8 +623,19 @@ def install_payload(claude_dir: Path, agentcomm_dir: Path, report: Report,
     report.add("ok", "runtime directories", "state and backup directories present")
 
 
+def agent_memory_stem(agent_name: str) -> str:
+    """Build an Obsidian-safe, human-readable note name from the given name."""
+    raw = unicodedata.normalize("NFKC", str(agent_name or ""))
+    cleaned = "".join(" " if char in '/\\:*?"<>|#^[]' or unicodedata.category(char)[0] == "C"
+                      else char for char in raw)
+    cleaned = " ".join(cleaned.split()).strip(" .")
+    if not cleaned or len(cleaned.encode("utf-8")) > 180:
+        raise ValueError("agent name cannot form a safe Obsidian memory note")
+    return f"{cleaned}Memory"
+
+
 def install_vault_system(vault: Path | None, report: Report, dry_run: bool,
-                         *, access: str) -> None:
+                         *, access: str, agent_name: str) -> None:
     """Merge the complete bundled 00 System tree into the selected WRITE vault."""
     step("Obsidian — 00 System")
     if vault is None:
@@ -632,15 +650,31 @@ def install_vault_system(vault: Path | None, report: Report, dry_run: bool,
     source = VAULT_SYSTEM_SRC
     destination = vault / "00 System"
     try:
+        memory_stem = agent_memory_stem(agent_name)
+        memory_name = memory_stem.encode("utf-8")
+        template = source / "AgentMemory.md.template"
         if source.is_symlink() or not source.is_dir():
             raise OSError(f"bundled 00 System directory is missing or invalid: {source}")
+        if template.is_symlink() or not template.is_file():
+            raise OSError(f"bundled agent memory template is missing or invalid: {template}")
         if not vault.is_dir() or not (vault / ".obsidian").is_dir():
             raise OSError(f"selected vault has no .obsidian directory: {vault}")
         entries = [source, *sorted(source.rglob("*"))]
+        def target_for(entry: Path) -> Path:
+            relative = entry.relative_to(source)
+            return destination / (f"{memory_stem}.md" if entry == template else relative)
+
+        legacy_memory = destination / "SondraMemory.md"
+        if memory_stem.casefold() != "sondramemory" and legacy_memory.is_symlink():
+            raise OSError(f"legacy memory note is a symlink: {legacy_memory}")
         # Check the whole tree before copying, including empty directories and
         # hidden files. A destination link must not redirect a copy outside it.
+        targets: set[Path] = set()
         for entry in entries:
-            target = destination / entry.relative_to(source)
+            target = target_for(entry)
+            if target in targets:
+                raise OSError(f"two bundled entries target the same vault path: {target}")
+            targets.add(target)
             if entry.is_symlink() or target.is_symlink():
                 raise OSError(f"cannot copy through a symlink: {entry} -> {target}")
             if not (entry.is_dir() or entry.is_file()):
@@ -649,16 +683,20 @@ def install_vault_system(vault: Path | None, report: Report, dry_run: bool,
                 raise OSError(f"file/directory conflict at {target}")
         count = sum(entry.is_file() for entry in entries)
         if dry_run:
-            report.add("skip", "vault system files", f"would copy all {count} files to {destination}")
+            report.add("skip", "vault system files",
+                       f"would copy all {count} files to {destination}, including {memory_stem}.md")
             return
         written = unchanged = replaced = 0
         with loading_indicator(True):
             for entry in entries:
-                target = destination / entry.relative_to(source)
+                target = target_for(entry)
                 if entry.is_dir():
                     target.mkdir(parents=True, exist_ok=True)
                     continue
-                digest = hashlib.sha256(entry.read_bytes()).digest()
+                original = entry.read_bytes()
+                rendered = (original.replace(b"{{MEMORY_NAME}}", memory_name)
+                            if entry.suffix == ".md" or entry == template else original)
+                digest = hashlib.sha256(rendered).digest()
                 if target.exists():
                     if hashlib.sha256(target.read_bytes()).digest() == digest:
                         unchanged += 1
@@ -672,6 +710,8 @@ def install_vault_system(vault: Path | None, report: Report, dry_run: bool,
                 temporary = Path(name)
                 try:
                     shutil.copy2(entry, temporary)
+                    if rendered != original:
+                        temporary.write_bytes(rendered)
                     if hashlib.sha256(temporary.read_bytes()).digest() != digest:
                         raise OSError(f"copied file did not match its source: {entry}")
                     os.replace(temporary, target)
@@ -682,7 +722,28 @@ def install_vault_system(vault: Path | None, report: Report, dry_run: bool,
         if replaced:
             detail += f", {replaced} replaced (backed up)"
         report.add("ok", "vault system files", f"{detail}; {destination}")
-    except OSError as error:
+        if memory_stem.casefold() != "sondramemory" and legacy_memory.is_file():
+            legacy_digest = hashlib.sha256(
+                legacy_memory.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+            if legacy_digest == LEGACY_SONDRA_MEMORY_SHA256:
+                saved = legacy_memory.with_name(
+                    f"SondraMemory.md.skmr-bak-{time.time_ns()}-{secrets.token_hex(4)}")
+                legacy_memory.rename(saved)
+                report.add("ok", "legacy memory note", f"untouched sample archived at {saved}")
+            else:
+                report.add("warn", "legacy memory note",
+                           f"{legacy_memory} contains edits; preserved for manual review")
+        # Obsidian creates this exact sample note in a new vault. It is not a
+        # canonical SKMR note and its example wikilink is deliberately broken.
+        # Preserve the original beside the vault before removing the sample.
+        welcome = vault / "Welcome.md"
+        if welcome.is_file() and not welcome.is_symlink():
+            original = welcome.read_text(encoding="utf-8")
+            if original.replace("\r\n", "\n").strip() == DEFAULT_OBSIDIAN_WELCOME:
+                saved = welcome.with_name(f"Welcome.md.skmr-bak-{time.time_ns()}-{secrets.token_hex(4)}")
+                welcome.rename(saved)
+                report.add("ok", "Obsidian starter", f"sample archived at {saved}")
+    except (OSError, ValueError) as error:
         report.add("fail", "vault system files", str(error))
 
 
@@ -756,8 +817,26 @@ def restore_vendor_modes(repository: Path) -> None:
         path.chmod(0o755 if mode == "100755" else 0o644)
 
 
+def _is_unchanged_bundle_copy(source: Path, destination: Path) -> bool:
+    """Identify complete or interrupted copies without accepting user edits."""
+    if source.is_symlink() or not source.is_dir() or not destination.is_dir():
+        return False
+    source_entries = {entry.relative_to(source): entry for entry in source.rglob("*")}
+    destination_entries = {entry.relative_to(destination): entry for entry in destination.rglob("*")}
+    if not destination_entries.keys() <= source_entries.keys():
+        return False
+    for relative, other in destination_entries.items():
+        entry = source_entries[relative]
+        if (entry.is_symlink() or other.is_symlink() or entry.is_dir() != other.is_dir()
+                or not (entry.is_file() or entry.is_dir()) or not (other.is_file() or other.is_dir())):
+            return False
+        if entry.is_file() and hashlib.sha256(entry.read_bytes()).digest() != hashlib.sha256(other.read_bytes()).digest():
+            return False
+    return True
+
+
 def install_knowledge(claude_dir: Path, report: Report, dry_run: bool) -> None:
-    """Place the bundled repositories; clone only if the bundle omits them."""
+    """Create verified Git checkouts and repair untouched vendor copies."""
     step("Knowledge repositories")
     knowledge_dir = claude_dir / "knowledge"
     if not dry_run:
@@ -767,34 +846,88 @@ def install_knowledge(claude_dir: Path, report: Report, dry_run: bool) -> None:
                       ("bugskill-ai-data", None)):
         source = KNOWLEDGE_SRC / name
         destination = knowledge_dir / name
-        if destination.is_dir() and any(destination.iterdir()):
-            report.add("ok", name, "already present")
-            continue
         if dry_run:
-            report.add("skip", name,
-                       "would place from bundle" if source.is_dir() else "would clone")
+            report.add("skip", name, "would verify or clone" if url else "would place data from bundle")
             continue
-        if source.is_dir():
-            shutil.copytree(source, destination, symlinks=False, dirs_exist_ok=True)
-            head = ""
-            if (destination / ".git").exists() and have("git"):
-                restore_vendor_modes(destination)
-                head = run(["git", "-C", str(destination), "rev-parse", "--short=7", "HEAD"],
-                           timeout=60).stdout.strip()
-            report.add("ok", name, f"placed from bundle{f' @ {head}' if head else ''}")
-        elif url and have("git"):
-            result = run(["git", "clone", "--depth", "1", url, str(destination)], timeout=1800, loading=True)
-            report.add("ok" if result.returncode == 0 else "warn", name,
-                       "cloned" if result.returncode == 0
-                       else f"clone failed: {result.stderr.strip()[:60]}")
-        else:
-            report.add("warn", name, "not bundled and cannot be cloned")
+        if not url:
+            if destination.is_dir() and any(destination.iterdir()):
+                report.add("ok", name, "already present")
+            elif source.is_dir():
+                shutil.copytree(source, destination, symlinks=False, dirs_exist_ok=True)
+                report.add("ok", name, "placed from bundle")
+            else:
+                report.add("fail", name, "bundled data directory is missing")
             continue
-        # The session hook refuses a managed repository owned by another
-        # account. copytree and git clone already create these files as the
-        # installing user, which is the account the agent will run as, so there
-        # is nothing to chown -- and forcing uid 0 here, as this once did, made
-        # the tree unusable for an ordinary user.
+        if not have("git"):
+            report.add("fail", name, "git is required for a verified checkout")
+            continue
+        if destination.is_symlink() or (destination.exists() and not destination.is_dir()):
+            report.add("fail", name, "destination is not a regular directory")
+            continue
+        if (destination / ".git").is_dir():
+            remote = run(["git", "-C", str(destination), "remote", "get-url", "origin"], timeout=30)
+            head = run(["git", "-C", str(destination), "rev-parse", "--verify", "HEAD"], timeout=30)
+            dirty = run(["git", "-C", str(destination), "status", "--porcelain"], timeout=30)
+            if (remote.returncode or remote.stdout.strip() != url or head.returncode
+                    or dirty.returncode or dirty.stdout.strip()):
+                report.add("fail", name, "existing Git checkout has an unexpected origin, invalid HEAD, or local changes")
+                continue
+            fetched = run(["git", "-C", str(destination), "fetch", "--prune", "--quiet",
+                           "origin", "main"], timeout=1800, loading=True)
+            if fetched.returncode:
+                report.add("fail", name, "could not verify upstream main: " +
+                           (fetched.stderr or fetched.stdout).strip()[-160:])
+                continue
+            merged = run(["git", "-C", str(destination), "merge", "--ff-only", "--quiet",
+                          "FETCH_HEAD"], timeout=120)
+            if merged.returncode:
+                report.add("fail", name, "existing checkout is not a fast-forward of upstream main; preserved")
+                continue
+            verified = run(["git", "-C", str(destination), "rev-parse", "--verify", "HEAD"], timeout=30)
+            clean = run(["git", "-C", str(destination), "status", "--porcelain"], timeout=30)
+            if verified.returncode or clean.returncode or clean.stdout.strip():
+                report.add("fail", name, "updated Git checkout could not be verified")
+            else:
+                report.add("ok", name, f"verified Git checkout @ {verified.stdout.strip()[:7]}")
+            continue
+        if destination.exists() and any(destination.iterdir()) and not _is_unchanged_bundle_copy(source, destination):
+            report.add("fail", name, "existing non-Git directory differs from the bundle; preserved for review")
+            continue
+
+        temporary = Path(tempfile.mkdtemp(prefix=f".{name}.skmr-clone-", dir=knowledge_dir))
+        try:
+            result = run(["git", "clone", "--branch", "main", "--single-branch", "--depth", "1",
+                          url, str(temporary)], timeout=1800, loading=True)
+            if result.returncode:
+                detail = (result.stderr or result.stdout).strip().splitlines()
+                report.add("fail", name, "clone failed: " + (detail[-1][:160] if detail else "unknown error"))
+                continue
+            remote = run(["git", "-C", str(temporary), "remote", "get-url", "origin"], timeout=30)
+            head = run(["git", "-C", str(temporary), "rev-parse", "--verify", "HEAD"], timeout=30)
+            dirty = run(["git", "-C", str(temporary), "status", "--porcelain"], timeout=30)
+            if (remote.returncode or remote.stdout.strip() != url or head.returncode
+                    or dirty.returncode or dirty.stdout.strip()):
+                report.add("fail", name, "new Git checkout could not be verified")
+                continue
+            saved = None
+            if destination.exists():
+                saved = destination.with_name(f"{name}.skmr-bak-{time.time_ns()}")
+                destination.rename(saved)
+            try:
+                temporary.rename(destination)
+            except OSError:
+                if saved is not None and not destination.exists():
+                    saved.rename(destination)
+                raise
+            detail = f"verified Git checkout @ {head.stdout.strip()[:7]}"
+            if saved is not None:
+                detail += f"; previous bundle saved at {saved}"
+            report.add("ok", name, detail)
+        except OSError as error:
+            report.add("fail", name, str(error))
+        finally:
+            if temporary.exists():
+                shutil.rmtree(temporary)
 
 
 # ------------------------------------------------------------------- settings
@@ -1285,6 +1418,7 @@ def prompt_identity(claude_dir: Path, agentcomm_dir: Path, vault: Path | None,
 
     answers = {
         "SELF": self_id, "PEER": peer_id, "RANK": self_role,
+        "DISPLAY_NAME": self_id[:1].upper() + self_id[1:],
         "PORT": port, "LOCAL_LAN": local_address(), "PEER_LAN": peer_lan,
         "SMB_HOST": smb_host, "VAULT_NAME": vault_name, "TASKS_SHARE": tasks_share,
         "SMB_DOMAIN": self_host,
@@ -1583,10 +1717,12 @@ def materialise_skills(claude_dir: Path, agentcomm_dir: Path, report: Report,
             names = json.loads(inventory.read_text(encoding="utf-8")).get("skills", [])
         except (OSError, json.JSONDecodeError):
             names = []
-        report.add("ok", "security skills", f"{len(names)} managed skills installed")
+        count = len(names) if isinstance(names, list) else 0
+        report.add("ok" if count and result.returncode == 0 else "fail",
+                   "security skills", f"{count} managed skills installed; hook exit {result.returncode}")
     else:
         detail = (result.stderr or result.stdout).strip().splitlines()
-        report.add("warn", "security skills",
+        report.add("fail", "security skills",
                    f"no inventory written; hook exit {result.returncode}"
                    + (f": {detail[-1][:50]}" if detail else ""))
 
@@ -2219,7 +2355,8 @@ def install_auto_node(plan_path: Path, stage: str, join: str | None) -> int:
         if report.failed:
             say(report.render())
             return 1
-        install_vault_system(vault, report, False, access=answers["SELF_ACCESS"])
+        install_vault_system(vault, report, False, access=answers["SELF_ACCESS"],
+                             agent_name=answers["DISPLAY_NAME"])
         if report.failed:
             say(report.render())
             return 1
@@ -2584,7 +2721,8 @@ def main() -> int:
             peer = answers.get("PEER")
             if not report.failed:
                 install_vault_system(vault, report, args.dry_run,
-                                     access=answers.get("SELF_ACCESS", ""))
+                                     access=answers.get("SELF_ACCESS", ""),
+                                     agent_name=answers.get("DISPLAY_NAME", ""))
             configure_samba(agentcomm_dir, vault, answers, manager, report,
                             args.dry_run, args.rotate_secrets)
         # After the identity, because the policy names the vault and the peer.

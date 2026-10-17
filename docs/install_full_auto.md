@@ -46,11 +46,11 @@ cd '/mnt/c/Users/YOUR_WINDOWS_USER/OneDrive/Masaüstü/skmr'
 
 A Windows vault such as `C:\Users\YOUR_WINDOWS_USER\Documents\AtlasMemory` is entered as `/mnt/c/Users/YOUR_WINDOWS_USER/Documents/AtlasMemory`. The Docker Engine used by this shell must be able to bind-mount that path. Do not enter a Windows drive-letter path at the Linux installer prompt.
 
-### Prepare real vault content
+### Prepare an Obsidian vault
 
 Open each selected folder as a vault in Obsidian before installation. Method A checks for `.obsidian`; an empty placeholder directory is insufficient.
 
-The bundled `00 System` notes contain links to **`Profile`**, **`Projects`**, **`Security MOC`**, and **`Working Style`**. These destination notes must exist in the selected vault and contain your actual information. Also resolve any other broken links in the vault. Full auto runs strict vault validation, so a vault with unresolved links can stop installation after the packages have been installed.
+A newly created Obsidian vault is sufficient. The installer creates the linked **`Profile`**, **`Projects`**, **`Security MOC`**, and **`Working Style`** starter notes without inventing personal information. It moves Obsidian's untouched sample `Welcome.md` to a `.skmr-bak-*` backup. Empty Obsidian drafts are preserved but excluded from permanent-note validation. If you have added content to other notes, resolve their broken links and missing SKMR frontmatter before installation; strict vault validation still checks those notes.
 
 For two Commanders, choose **two distinct vault paths**. Each Commander owns its vault and receives read-only access to the other Commander's vault.
 
@@ -128,18 +128,22 @@ The exact peer mount names use the normalized agent IDs. In the Commander–Lieu
 
 ### The bundled `00 System` directory
 
-The installer copies **all files beneath `payload/vault/00 System/`** into `00 System/` inside every selected WRITE vault:
+The installer copies the bundled system notes into `00 System/` inside every selected WRITE vault. It renders `AgentMemory.md.template` with that vault owner's chosen agent name before writing any note:
 
 ```text
 <your-vault>/00 System/
 ├── Home.md
 ├── Knowledge Map.md
-├── SondraMemory.md
+├── Profile.md
+├── Projects.md
+├── Security MOC.md
+├── <AgentName>Memory.md
+├── Working Style.md
 └── SKMR/
     └── SKMR.md
 ```
 
-The source is the packaged project directory, not a separate personal vault on the installation host. Identical files are kept; differing existing files receive `.skmr-bak-*` backups before replacement. A Lieutenant reads the Commander's shared copy rather than writing its own copy through the read-only mount.
+For an agent named Eliza, the generated note is `ElizaMemory.md` and the SKMR note links to `[[ElizaMemory]]`. The source is the packaged project directory, not a separate personal vault on the installation host. Identical files are kept; differing existing files receive `.skmr-bak-*` backups before replacement. An untouched legacy `SondraMemory.md` is archived; edited legacy notes are preserved for review. A Lieutenant reads the Commander's shared copy rather than writing its own copy through the read-only mount.
 
 ## 4. Enter the labs and authenticate Claude
 

@@ -382,6 +382,123 @@ class AutoInstallerTests(unittest.TestCase):
         export.assert_called_once_with(Path("/root/agentcomm/agent.conf"), dry_run=False)
 
 
+@unittest.skipUnless(sys.platform.startswith("linux") and shutil.which("git"), "requires Linux Git")
+class KnowledgeInstallTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.bundle = self.root / "bundle"
+        self.bundle.mkdir()
+        self.claude = self.root / "claude"
+        self.urls = {}
+        for name in ("BugBountySkills", "bugskill-ai"):
+            work = self.root / f"{name}-source"
+            work.mkdir()
+            subprocess.run(["git", "-C", str(work), "init", "--quiet", "--initial-branch=main"], check=True)
+            (work / "README.md").write_text(f"{name} reference\n", encoding="utf-8")
+            (work / "GUIDE.md").write_text(f"{name} guide\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(work), "add", "."], check=True)
+            subprocess.run(["git", "-C", str(work), "-c", "user.name=Fixture",
+                            "-c", "user.email=fixture@example.invalid", "commit", "--quiet",
+                            "-m", "Initial"], check=True)
+            bare = self.root / f"{name}.git"
+            subprocess.run(["git", "clone", "--quiet", "--bare", str(work), str(bare)], check=True)
+            self.urls[name] = bare.as_uri()
+            shutil.copytree(work, self.bundle / name, ignore=shutil.ignore_patterns(".git"))
+        (self.bundle / "bugskill-ai-data").mkdir()
+
+    def install(self):
+        report = installer.Report()
+        with patch.object(installer, "KNOWLEDGE_SRC", self.bundle), \
+             patch.object(installer, "BUGBOUNTY_URL", self.urls["BugBountySkills"]), \
+             patch.object(installer, "BUGSKILL_URL", self.urls["bugskill-ai"]), \
+             contextlib.redirect_stdout(io.StringIO()):
+            installer.install_knowledge(self.claude, report, False)
+        return report
+
+    def test_new_install_creates_verified_git_checkouts(self):
+        report = self.install()
+        self.assertFalse(report.failed, report.render())
+        for name in self.urls:
+            destination = self.claude / "knowledge" / name
+            self.assertTrue((destination / ".git").is_dir(), str(destination))
+            remote = subprocess.check_output(["git", "-C", str(destination),
+                                              "remote", "get-url", "origin"], text=True).strip()
+            self.assertEqual(remote, self.urls[name])
+            self.assertEqual(subprocess.check_output(["git", "-C", str(destination),
+                                                     "status", "--porcelain"], text=True), "")
+
+    def test_partial_bundle_install_is_repaired_without_erasing_its_copy(self):
+        destination = self.claude / "knowledge" / "bugskill-ai"
+        shutil.copytree(self.bundle / "bugskill-ai", destination)
+        report = self.install()
+        self.assertFalse(report.failed, report.render())
+        self.assertTrue((destination / ".git").is_dir())
+        backups = list(destination.parent.glob("bugskill-ai.skmr-bak-*"))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual((backups[0] / "README.md").read_bytes(),
+                         (self.bundle / "bugskill-ai" / "README.md").read_bytes())
+
+    def test_interrupted_bundle_copy_is_repaired_without_erasing_present_files(self):
+        destination = self.claude / "knowledge" / "bugskill-ai"
+        destination.mkdir(parents=True)
+        shutil.copy2(self.bundle / "bugskill-ai" / "README.md", destination / "README.md")
+        report = self.install()
+        self.assertFalse(report.failed, report.render())
+        self.assertTrue((destination / ".git").is_dir())
+        backups = list(destination.parent.glob("bugskill-ai.skmr-bak-*"))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual((backups[0] / "README.md").read_bytes(),
+                         (self.bundle / "bugskill-ai" / "README.md").read_bytes())
+
+    def test_unrelated_clean_checkout_with_expected_origin_is_rejected(self):
+        destination = self.claude / "knowledge" / "bugskill-ai"
+        destination.mkdir(parents=True)
+        subprocess.run(["git", "-C", str(destination), "init", "--quiet", "--initial-branch=main"], check=True)
+        (destination / "README.md").write_text("unrelated contents\n", encoding="utf-8")
+        subprocess.run(["git", "-C", str(destination), "add", "README.md"], check=True)
+        subprocess.run(["git", "-C", str(destination), "-c", "user.name=Fixture",
+                        "-c", "user.email=fixture@example.invalid", "commit", "--quiet",
+                        "-m", "Unrelated"], check=True)
+        subprocess.run(["git", "-C", str(destination), "remote", "add", "origin",
+                        self.urls["bugskill-ai"]], check=True)
+        report = self.install()
+        self.assertTrue(report.failed, report.render())
+        self.assertEqual((destination / "README.md").read_text(), "unrelated contents\n")
+
+    def test_modified_non_git_knowledge_is_preserved_and_reported(self):
+        destination = self.claude / "knowledge" / "bugskill-ai"
+        shutil.copytree(self.bundle / "bugskill-ai", destination)
+        (destination / "README.md").write_text("user changes\n", encoding="utf-8")
+        report = self.install()
+        self.assertTrue(report.failed, report.render())
+        self.assertEqual((destination / "README.md").read_text(), "user changes\n")
+
+    def test_failed_clone_keeps_the_previous_bundle(self):
+        destination = self.claude / "knowledge" / "bugskill-ai"
+        shutil.copytree(self.bundle / "bugskill-ai", destination)
+        self.urls["bugskill-ai"] = (self.root / "missing.git").as_uri()
+        report = self.install()
+        self.assertTrue(report.failed, report.render())
+        self.assertEqual((destination / "README.md").read_bytes(),
+                         (self.bundle / "bugskill-ai" / "README.md").read_bytes())
+        self.assertFalse((destination / ".git").exists())
+
+
+class SecuritySkillInstallTests(unittest.TestCase):
+    def test_missing_skill_inventory_is_an_installation_failure(self):
+        with tempfile.TemporaryDirectory() as root:
+            claude = Path(root) / "claude"
+            hook = claude / "bin" / "security-kb-session-start.py"
+            hook.parent.mkdir(parents=True)
+            hook.write_text("print('{}')\n", encoding="utf-8")
+            report = installer.Report()
+            with contextlib.redirect_stdout(io.StringIO()):
+                installer.materialise_skills(claude, Path(root) / "agentcomm", report, False)
+            self.assertTrue(report.failed, report.render())
+
+
 class VaultSystemInstallTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -390,7 +507,10 @@ class VaultSystemInstallTests(unittest.TestCase):
         self.source = self.root / "package" / "00 System"
         (self.source / "SKMR" / "Empty folder").mkdir(parents=True)
         (self.source / "Home.md").write_text("# Home\n", encoding="utf-8")
-        (self.source / "SKMR" / "SKMR.md").write_text("# SKMR — Türkçe\n", encoding="utf-8")
+        (self.source / "SKMR" / "SKMR.md").write_text(
+            "# SKMR — Türkçe\n[[{{MEMORY_NAME}}]]\n", encoding="utf-8")
+        (self.source / "AgentMemory.md.template").write_text(
+            '---\ntitle: "{{MEMORY_NAME}}"\n---\n# {{MEMORY_NAME}}\n', encoding="utf-8")
         (self.source / "SKMR" / ".asset").write_bytes(b"\x00\xff\x01")
         self.vault = self.root / "Selected Vault"
         (self.vault / ".obsidian").mkdir(parents=True)
@@ -402,7 +522,8 @@ class VaultSystemInstallTests(unittest.TestCase):
         with patch.object(installer, "VAULT_SYSTEM_SRC", self.source, create=True), \
              contextlib.redirect_stdout(io.StringIO()):
             installer.install_vault_system(self.vault if vault is None else vault,
-                                           report, dry_run, access=access)
+                                           report, dry_run, access=access,
+                                           agent_name="Eliza")
         return report
 
     def test_copies_every_file_and_empty_subdirectory_into_selected_vault(self):
@@ -410,12 +531,138 @@ class VaultSystemInstallTests(unittest.TestCase):
         self.assertFalse(report.failed, report.render())
         destination = self.vault / "00 System"
         for source in self.source.rglob("*"):
-            target = destination / source.relative_to(self.source)
+            target = (destination / "ElizaMemory.md" if source.name == "AgentMemory.md.template"
+                      else destination / source.relative_to(self.source))
             if source.is_dir():
                 self.assertTrue(target.is_dir(), str(target))
             else:
-                self.assertEqual(target.read_bytes(), source.read_bytes())
+                expected = source.read_bytes().replace(b"{{MEMORY_NAME}}", b"ElizaMemory")
+                self.assertEqual(target.read_bytes(), expected)
         self.assertFalse((destination / "00 System").exists())
+
+    def test_fresh_vault_uses_each_agents_name_instead_of_a_fixed_memory_note(self):
+        self.assertIn("agent_name", inspect.signature(installer.install_vault_system).parameters)
+        writer_path = ROOT / "payload/claude/skills/skmr/scripts/obsidian_memory.py"
+        for name, expected in (("Eliza", "ElizaMemory"),
+                               ("Agena", "AgenaMemory"),
+                               ("Elie / Bir", "Elie BirMemory")):
+            with self.subTest(name=name):
+                vault = self.root / name.replace("/", "-")
+                (vault / ".obsidian").mkdir(parents=True)
+                report = installer.Report()
+                with contextlib.redirect_stdout(io.StringIO()):
+                    installer.install_vault_system(
+                        vault, report, False, access="write", agent_name=name)
+                self.assertFalse(report.failed, report.render())
+                system = vault / "00 System"
+                memory = system / f"{expected}.md"
+                self.assertTrue(memory.is_file())
+                self.assertIn(f'title: "{expected}"', memory.read_text(encoding="utf-8"))
+                self.assertIn(f"# {expected}", memory.read_text(encoding="utf-8"))
+                self.assertIn(f"[[{expected}]]",
+                              (system / "SKMR" / "SKMR.md").read_text(encoding="utf-8"))
+                self.assertFalse((system / "SondraMemory.md").exists())
+                self.assertFalse((system / "AgentMemory.md.template").exists())
+                conf = self.root / f"{expected}.json"
+                conf.write_text(json.dumps({"self": "tester", "vault_local": str(vault),
+                                            "vault_backing": "local", "vault_name": "test-vault",
+                                            "vault_permissions": {"test-vault": {"tester": "write"}}}))
+                result = subprocess.run(
+                    [sys.executable, "-B", str(writer_path), "validate"],
+                    capture_output=True, text=True, timeout=30,
+                    env={**os.environ, "AGENTCOMM_CONF": str(conf),
+                         "AGENTCOMM_LIB": str(ROOT / "payload/claude/lib"),
+                         "SKMR_STATE_DIR": str(self.root / f"{expected}-state")})
+                self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+
+    def test_reinstall_archives_untouched_legacy_memory_note(self):
+        system = self.vault / "00 System"
+        system.mkdir()
+        legacy = system / "SondraMemory.md"
+        legacy.write_text(
+            '---\ntitle: "SondraMemory"\ntype: "system"\narea: "system"\n'
+            'status: "user-provided"\nupdated: 2026-09-10\ntags:\n'
+            '  - "system"\n  - "memory"\n---\n\n# SondraMemory\n\n'
+            'SondraMemory is the canonical permanent knowledge vault. '
+            'It uses PARA folders and a selective Obsidian knowledge graph.\n\n'
+            '## Related\n\n- [[Knowledge Map]]\n- [[SKMR]]\n',
+            encoding="utf-8")
+        inode = legacy.stat().st_ino
+        report = installer.Report()
+        with contextlib.redirect_stdout(io.StringIO()):
+            installer.install_vault_system(
+                self.vault, report, False, access="write", agent_name="Eliza")
+        self.assertFalse(report.failed, report.render())
+        self.assertFalse(legacy.exists())
+        self.assertTrue((system / "ElizaMemory.md").is_file())
+        backups = list(system.glob("SondraMemory.md.skmr-bak-*"))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual(backups[0].stat().st_ino, inode)
+
+    def test_reinstall_keeps_edited_legacy_memory_note_for_review(self):
+        system = self.vault / "00 System"
+        system.mkdir()
+        legacy = system / "SondraMemory.md"
+        legacy.write_text("My earlier note\n", encoding="utf-8")
+        report = installer.Report()
+        with contextlib.redirect_stdout(io.StringIO()):
+            installer.install_vault_system(
+                self.vault, report, False, access="write", agent_name="Eliza")
+        self.assertFalse(report.failed, report.render())
+        self.assertEqual(legacy.read_text(encoding="utf-8"), "My earlier note\n")
+        self.assertTrue(any(state == "warn" for state, _, _ in report.rows))
+
+    def test_shipped_system_notes_validate_in_a_new_obsidian_vault(self):
+        writer_path = ROOT / "payload/claude/skills/skmr/scripts/obsidian_memory.py"
+        welcome = self.vault / "Welcome.md"
+        draft = self.vault / "Untitled.md"
+        draft.write_text("  \n", encoding="utf-8")
+        welcome.write_text(
+            "This is your new *vault*.\n\n"
+            "Make a note of something, [[create a link]], or try "
+            "[the Importer](obsidian://show-plugin?id=obsidian-importer)!\n\n"
+            "When you're ready, delete this note and make the vault your own.\n",
+            encoding="utf-8",
+        )
+        original_inode = welcome.stat().st_ino
+        report = installer.Report()
+        with contextlib.redirect_stdout(io.StringIO()):
+            installer.install_vault_system(self.vault, report, False,
+                                           access="write", agent_name="Eliza")
+        self.assertFalse(report.failed, report.render())
+        conf = self.root / "agent.conf"
+        conf.write_text(json.dumps({"self": "tester", "vault_local": str(self.vault),
+                                    "vault_backing": "local", "vault_name": "test-vault",
+                                    "vault_permissions": {"test-vault": {"tester": "write"}}}))
+        validator_env = {**os.environ, "AGENTCOMM_CONF": str(conf),
+                         "AGENTCOMM_LIB": str(ROOT / "payload/claude/lib"),
+                         "SKMR_STATE_DIR": str(self.root / "state")}
+        result_process = subprocess.run(
+            [sys.executable, "-B", str(writer_path), "validate"], capture_output=True, text=True,
+            env=validator_env, timeout=30)
+        self.assertEqual(result_process.returncode, 0, result_process.stderr + result_process.stdout)
+        result = json.loads(result_process.stdout)
+        self.assertTrue(result["ok"], result)
+        self.assertTrue(draft.exists(), "an empty Obsidian draft belongs to the user")
+        self.assertFalse(welcome.exists())
+        backups = list(self.vault.glob("Welcome.md.skmr-bak-*"))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual(backups[0].stat().st_ino, original_inode,
+                         "Obsidian's sample must be moved atomically, not copied then deleted")
+        broken_system_note = self.vault / "00 System" / "Broken.md"
+        broken_system_note.write_text("", encoding="utf-8")
+        broken_result = subprocess.run(
+            result_process.args, capture_output=True, text=True,
+            env=validator_env, timeout=30)
+        self.assertEqual(broken_result.returncode, 1)
+        self.assertIn("00 System/Broken.md", json.loads(broken_result.stdout)["errors"])
+
+    def test_nondefault_welcome_note_is_preserved(self):
+        welcome = self.vault / "Welcome.md"
+        welcome.write_text("My own note\n", encoding="utf-8")
+        self.copy()
+        self.assertEqual(welcome.read_text(encoding="utf-8"), "My own note\n")
+        self.assertFalse(list(self.vault.glob("Welcome.md.skmr-bak-*")))
 
     def test_repeat_install_preserves_unrelated_notes_and_backs_up_replaced_files(self):
         self.copy()
@@ -472,7 +719,8 @@ class VaultSystemInstallTests(unittest.TestCase):
                 arguments = ["install.py", "--method", "B", "--no-packages",
                     "--claude-dir", str(self.root / f"claude-{access}"),
                     "--agentcomm-dir", str(self.root / f"agentcomm-{access}")]
-                answers = {"SELF_ACCESS": access, "SELF_HOST_ROLE": "consumer", "PEER": "peer"}
+                answers = {"SELF_ACCESS": access, "SELF_HOST_ROLE": "consumer",
+                           "PEER": "peer", "DISPLAY_NAME": "Eliza"}
                 with contextlib.ExitStack() as stack:
                     stack.enter_context(patch.object(sys, "argv", arguments))
                     stack.enter_context(patch.object(installer.platform, "system", return_value="Linux"))
@@ -487,7 +735,8 @@ class VaultSystemInstallTests(unittest.TestCase):
                     self.assertEqual(installer.main(), 0)
                 target = vault / "00 System" / "SKMR" / "SKMR.md"
                 if access == "write":
-                    self.assertEqual(target.read_bytes(), (self.source / "SKMR" / "SKMR.md").read_bytes())
+                    self.assertIn("[[ElizaMemory]]", target.read_text(encoding="utf-8"))
+                    self.assertTrue((vault / "00 System" / "ElizaMemory.md").is_file())
                 else:
                     self.assertFalse((vault / "00 System").exists())
 

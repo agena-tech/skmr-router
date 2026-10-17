@@ -75,7 +75,7 @@ SKMR offers **two installation paths**, both intended for **Linux**. Windows use
 | **Operator input** | Agent names and ranks, each Commander's existing Obsidian vault path, optional HackerOne API credentials, and Claude account login inside each lab. | Environment-specific paths, credentials, peer addresses, transport roles, and sharing configuration. |
 | **Best suited to** | A reproducible local deployment of two cooperating agents. | A main Linux terminal working with an agent on a remote machine, or a customized deployment. |
 
-The installer copies the bundled **`00 System`** directory into each selected WRITE vault and performs installation checks, vault validation, indexing, and subsystem diagnostics. READ agents use their WRITE peer's shared files. Full auto prints the container entry and Claude login commands when installation checks pass.
+An otherwise empty Obsidian vault is a valid starting point. The installer copies the bundled **`00 System`** notes into each selected WRITE vault and creates the memory note from its owner's chosen name (for example, `ElizaMemory.md`). If Obsidian's untouched sample `Welcome.md` is present, the installer backs it up before removing that sample. It also clones and verifies the public `BugBountySkills` and `bugskill-ai` Git repositories, so GitHub access is needed during installation. READ agents use their WRITE peer's shared files. Full auto validates the vault, indexes it, runs the test suites, and prints the container entry and Claude login commands when all checks pass.
 
 ### Installation Documentation
 

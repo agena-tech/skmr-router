@@ -51,7 +51,7 @@ The addresses below are examples. Substitute your actual reachable IPs or hostna
 
 Use different stable lowercase IDs composed of letters, digits, underscores, or hyphens. The IDs must match the token roster on both machines. Rank and reporting labels do not grant write access; the per-vault grants do.
 
-Prepare `/srv/AtlasMemory` as a real vault in Obsidian on the Commander. Its root must contain `.obsidian`. The bundled system notes link to `Profile`, `Projects`, `Security MOC`, and `Working Style`; provide those real notes and resolve broken links before final validation.
+Prepare `/srv/AtlasMemory` as a real vault in Obsidian on the Commander. Its root must contain `.obsidian`; it may otherwise be empty. The installer creates the linked `Profile`, `Projects`, `Security MOC`, and `Working Style` starter notes and archives Obsidian's untouched sample `Welcome.md`. Resolve broken links in any additional notes you created before final validation.
 
 Make the following connections reachable through your LAN, VPN, or other deliberately configured private network:
 
@@ -395,18 +395,22 @@ rm -f /root/join.json /home/workeruser/skmr-transfer/join.json /home/workeruser/
 
 ## 8. What appears in Obsidian
 
-The source is **`payload/vault/00 System/` inside the downloaded SKMR project**. All its contents are copied to `<selected-write-vault>/00 System/`:
+The source is **`payload/vault/00 System/` inside the downloaded SKMR project**. Its memory-note template is rendered using this agent's name before the system notes are copied to `<selected-write-vault>/00 System/`:
 
 ```text
 00 System/
 ├── Home.md
 ├── Knowledge Map.md
-├── SondraMemory.md
+├── Profile.md
+├── Projects.md
+├── Security MOC.md
+├── <AgentName>Memory.md
+├── Working Style.md
 └── SKMR/
     └── SKMR.md
 ```
 
-Identical files are preserved, while differing existing files receive `.skmr-bak-*` backups before replacement. This copy happens on a WRITE vault; the Lieutenant reads the Commander's copy through the mounted share. The installer also initializes writer-managed source/log structures and builds the local retrieval index.
+For an agent named Eliza, this produces `ElizaMemory.md` and a matching link in `SKMR.md`. Identical files are preserved, while differing existing files receive `.skmr-bak-*` backups before replacement. Untouched legacy `SondraMemory.md` is archived; edited legacy notes are preserved for review. This copy happens on a WRITE vault; the Lieutenant reads the Commander's copy through the mounted share. The installer also initializes writer-managed source/log structures and builds the local retrieval index.
 
 ## Optional public messaging connection
 
