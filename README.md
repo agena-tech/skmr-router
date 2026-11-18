@@ -2,6 +2,12 @@
 
 ![SKMR — Security Knowledge Memory Router](images/banner.jpg)
 
+## AXIOTRON — cybersecurity model research preview
+
+[![Hugging Face Model](https://img.shields.io/badge/Hugging%20Face-T1--100%20AXIOTRON-FFD21E?logo=huggingface&logoColor=black)](https://huggingface.co/anezatra/qwen3.5-9b-heretic-t1-100-gguf-axiotron-cyber)
+
+**[QWEN-3.5 9B T1-100 AXIOTRON](https://huggingface.co/anezatra/qwen3.5-9b-heretic-t1-100-gguf-axiotron-cyber)** is an experimental GGUF model release within the AXIOTRON cybersecurity research initiative. Its research direction complements SKMR's persistent intelligence architecture; an end-to-end integration has not yet been validated. The model repository currently requires authorized Hugging Face access.
+
 ## What is a Project?
 
 **SKMR is a persistent intelligence management layer for Claude Code, designed to preserve research continuity, retain verified security knowledge, and coordinate two collaborating agents.** It connects the immediate context of an investigation with an external memory system that remains available across sessions.
