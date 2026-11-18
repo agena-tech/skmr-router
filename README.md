@@ -6,7 +6,9 @@
 
 [![Hugging Face Model](https://img.shields.io/badge/Hugging%20Face-T1--100%20AXIOTRON-FFD21E?logo=huggingface&logoColor=black)](https://huggingface.co/anezatra/qwen3.5-9b-heretic-t1-100-gguf-axiotron-cyber)
 
-**[QWEN-3.5 9B T1-100 AXIOTRON](https://huggingface.co/anezatra/qwen3.5-9b-heretic-t1-100-gguf-axiotron-cyber)** is an experimental GGUF model release within the AXIOTRON cybersecurity research initiative. Its research direction complements SKMR's persistent intelligence architecture; an end-to-end integration has not yet been validated. The model repository currently requires authorized Hugging Face access.
+**The model we developed for compatibility with this project and recommend:** [QWEN-3.5 9B T1-100 AXIOTRON](https://huggingface.co/anezatra/qwen3.5-9b-heretic-t1-100-gguf-axiotron-cyber)
+
+This experimental GGUF research preview is intended to complement SKMR. End-to-end integration has not yet been validated. The model repository currently requires authorized Hugging Face access.
 
 ## What is a Project?
 
